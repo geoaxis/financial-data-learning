@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>European structured products — a software engineer's guide</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#ffffff;--bg2:#f6f5f1;--bg3:#eeedea;
+  --text:#181816;--text2:#5a5956;--text3:#9a9892;
+  --border:rgba(0,0,0,0.09);--border2:rgba(0,0,0,0.18);
+  --radius:8px;--radius-lg:14px;
+  --c-stock:#6b6966;--c-part:#1660a0;--c-disc:#0d6650;
+  --c-cap:#356012;--c-turbo:#b07015;--c-barrier:#d84040;
+}
+@media(prefers-color-scheme:dark){:root{
+  --bg:#181816;--bg2:#222220;--bg3:#2c2c2a;
+  --text:#e6e4dc;--text2:#9a9892;--text3:#686663;
+  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.15);
+  --c-stock:#9a9892;--c-part:#4a90d4;--c-disc:#2aaa82;
+  --c-cap:#70c040;--c-turbo:#e09030;--c-barrier:#e86060;
+}}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text);font-size:15px;line-height:1.7;margin:0;padding:0;}
+.page{max-width:880px;margin:0 auto;padding:52px 28px 80px;}
+
+/* hero */
+.hero{padding-bottom:44px;border-bottom:0.5px solid var(--border);margin-bottom:52px;}
+.hero-tag{font-size:11px;font-weight:600;letter-spacing:.1em;color:var(--text3);margin-bottom:14px;display:block;}
+.hero h1{font-size:28px;font-weight:500;line-height:1.25;margin-bottom:14px;max-width:700px;}
+.hero-sub{font-size:15px;color:var(--text2);max-width:660px;line-height:1.7;}
+
+/* sections */
+section{margin-bottom:56px;}
+.sec-tag{font-size:11px;font-weight:600;letter-spacing:.1em;color:var(--text3);margin-bottom:10px;display:block;}
+section h2{font-size:20px;font-weight:500;margin-bottom:18px;}
+.prose{color:var(--text2);max-width:700px;margin-bottom:14px;line-height:1.75;}
+.prose:last-child{margin-bottom:0;}
+.prose strong{color:var(--text);font-weight:500;}
+
+/* context callout */
+.callout{background:var(--bg2);border-left:3px solid var(--bg3);padding:14px 18px;font-size:13px;color:var(--text2);line-height:1.65;margin-top:20px;border-radius:0 var(--radius) var(--radius) 0;}
+.callout strong{color:var(--text);font-weight:500;}
+
+/* product type grid */
+.type-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:22px;}
+@media(max-width:600px){.type-grid{grid-template-columns:1fr;}}
+.tc{background:var(--bg2);border-radius:var(--radius-lg);padding:18px 20px;}
+.tc-head{display:flex;align-items:center;gap:9px;margin-bottom:12px;}
+.tc-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+.tc-name{font-size:13px;font-weight:600;color:var(--text);}
+.tc-risk{font-size:11px;padding:2px 8px;border-radius:4px;font-weight:500;margin-left:auto;}
+.tc-body{font-size:13px;color:var(--text2);line-height:1.6;}
+.tc-body strong{color:var(--text);font-weight:500;}
+.tc-analogy{margin-top:11px;padding-top:11px;border-top:0.5px solid var(--border);font-size:12px;color:var(--text3);line-height:1.55;}
+.tc-analogy strong{color:var(--text2);font-weight:500;font-style:normal;}
+
+/* interactive blocks */
+.iblock{background:var(--bg2);border-radius:var(--radius-lg);padding:26px;margin-top:22px;}
+.iblock-label{font-size:11px;font-weight:600;letter-spacing:.08em;color:var(--text3);margin-bottom:18px;}
+.chart-lg{position:relative;height:280px;margin-bottom:14px;}
+.chart-sm{position:relative;height:190px;margin-bottom:10px;}
+.chart-gap{margin-top:20px;}
+
+/* legend */
+.legend{display:flex;flex-wrap:wrap;gap:14px;margin-bottom:18px;}
+.li{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--text2);cursor:pointer;transition:opacity .15s;user-select:none;}
+.li.dim{opacity:0.28;}
+.li-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
+
+/* sliders */
+.sl-row{display:flex;align-items:center;gap:12px;margin-bottom:14px;}
+.sl-lbl{font-size:13px;color:var(--text2);white-space:nowrap;}
+.sl-val{font-size:14px;font-weight:500;min-width:54px;text-align:right;color:var(--text);}
+input[type=range]{-webkit-appearance:none;appearance:none;flex:1;height:4px;border-radius:2px;background:var(--bg3);outline:none;cursor:pointer;}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--text);cursor:pointer;}
+input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--text);cursor:pointer;border:none;}
+
+/* play row */
+.play-row{display:flex;align-items:center;gap:12px;margin-bottom:18px;}
+.play-btn{background:none;border:0.5px solid var(--border2);border-radius:var(--radius);padding:8px 20px;font-size:13px;color:var(--text);cursor:pointer;font-family:inherit;transition:background .15s;min-width:76px;}
+.play-btn:hover{background:var(--bg3);}
+.day-lbl{font-size:13px;color:var(--text2);}
+.day-lbl strong{color:var(--text);}
+
+/* value card grids */
+.vcg5{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:16px;}
+@media(max-width:700px){.vcg5{grid-template-columns:repeat(2,1fr);}}
+.vcg6{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:16px;}
+@media(max-width:600px){.vcg6{grid-template-columns:repeat(2,1fr);}}
+.vc{background:var(--bg);border-radius:var(--radius);padding:11px 13px;border:0.5px solid var(--border);}
+.vc-lbl{font-size:11px;color:var(--text3);display:flex;align-items:center;gap:5px;margin-bottom:4px;}
+.vc-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.vc-val{font-size:19px;font-weight:500;line-height:1.2;margin-bottom:2px;}
+.vc-chg{font-size:11px;}
+.vc-note{font-size:11px;color:var(--text3);margin-top:6px;padding-top:6px;border-top:0.5px solid var(--border);line-height:1.45;}
+.vc-hint{background:var(--bg2);border-radius:var(--radius);padding:11px 13px;border:0.5px solid transparent;font-size:12px;color:var(--text3);line-height:1.6;}
+.vc-hint strong{color:var(--text2);}
+
+/* knock-out banner */
+.ko{background:#fff0f0;border:0.5px solid rgba(216,64,64,.28);border-radius:var(--radius);padding:12px 16px;font-size:13px;color:#8a2020;line-height:1.6;margin-top:14px;display:none;}
+@media(prefers-color-scheme:dark){.ko{background:#2a1414;color:#e09090;border-color:rgba(216,64,64,.35);}}
+.ko strong{font-weight:500;}
+
+/* takeaways */
+.ta-list{display:flex;flex-direction:column;gap:14px;margin-top:18px;}
+.ta{display:flex;gap:16px;align-items:flex-start;}
+.ta-num{font-size:12px;font-weight:600;color:var(--text3);min-width:24px;padding-top:3px;letter-spacing:.04em;}
+.ta-text{font-size:14px;color:var(--text2);line-height:1.7;}
+.ta-text strong{color:var(--text);font-weight:500;}
+
+/* divider */
+.divider{border:none;border-top:0.5px solid var(--border);margin:0 0 52px;}
+
+/* footer */
+footer{border-top:0.5px solid var(--border);padding-top:22px;font-size:12px;color:var(--text3);line-height:1.7;}
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- ── HERO ── -->
+<header class="hero">
+  <span class="hero-tag">A GUIDE FOR SOFTWARE ENGINEERS</span>
+  <h1>European structured products — what they are and how they actually work</h1>
+  <p class="hero-sub">
+    You invest €100 in a bank-issued financial product. A few months later, SAP shares are up 15%.
+    Depending on which product you chose, you could be up 37%, up 9%, still exactly at €100, or sitting on a
+    near-total loss — even though the underlying share rose the whole time.
+    This guide explains why, using concrete numbers and analogies aimed at engineers rather than traders.
+  </p>
+</header>
+
+<!-- ── 01: CONCEPT ── -->
+<section>
+  <span class="sec-tag">01 — CONCEPT</span>
+  <h2>What is a structured product?</h2>
+  <p class="prose">
+    Think of it this way: a bank takes a normal share — say SAP, trading at €200 — and repackages it into
+    something with different risk/reward characteristics. Instead of buying the share directly, you buy a product
+    the bank designed. It might give you leverage, protect your downside, or cap your upside in exchange for
+    a purchase discount. Same underlying share, completely different outcome depending on what happens to the price.
+  </p>
+  <p class="prose">
+    Under the hood, all structured products are just two ingredients combined: <strong>a bond</strong> (which handles the
+    capital guarantee or provides the financing) and <strong>an option</strong> (which delivers the market exposure with
+    the specific payoff shape you want). The bank packages these together into a single tradeable security with an ISIN,
+    lists it on an exchange, and quotes live buy/sell prices throughout the trading day.
+  </p>
+  <p class="prose">
+    Crucially, there is no anonymous order book matching retail buyers with other sellers. When you trade a
+    structured product, <strong>you always trade directly against the issuing bank</strong>. The bank is the market maker
+    for its own products, quoting bid/ask prices continuously. It hedges its exposure in the derivatives market and
+    earns the spread. This means issuer credit risk is always present — if the bank fails, your claim is as an
+    unsecured creditor, even if the underlying SAP share is perfectly fine.
+  </p>
+  <div class="callout">
+    <strong>Where do these trade in Europe?</strong> Primarily on Börse Stuttgart (EUWAX) and Börse Frankfurt.
+    Stuttgart is Germany's dominant retail structured products venue — EUWAX stands for European Warrant Exchange.
+    Frankfurt lists over 1.8 million structured product ISINs, the largest such market in the world.
+    They are traded through normal brokerage accounts alongside regular stocks and ETFs.
+    The main issuers are Deutsche Bank, DZ Bank, Société Générale, BNP Paribas, HSBC, and Commerzbank.
+    Retail investors in Germany, Austria, and Switzerland treat them as a standard part of their investment toolkit.
+  </div>
+</section>
+
+<!-- ── 02: PRODUCT TYPES ── -->
+<section>
+  <span class="sec-tag">02 — PRODUCT TYPES</span>
+  <h2>The four main shapes</h2>
+  <p class="prose">
+    Every structured product is a variation on one of these four designs. They represent different tradeoffs
+    between upside participation, downside protection, and leverage.
+    The interactive sections below let you see exactly what each pays — at maturity, and over time.
+  </p>
+
+  <div class="type-grid">
+    <div class="tc">
+      <div class="tc-head">
+        <div class="tc-dot" style="background:var(--c-part)"></div>
+        <span class="tc-name">Participation certificate</span>
+        <span class="tc-risk" style="background:#e4edf8;color:#144a80">Simple</span>
+      </div>
+      <div class="tc-body">
+        Tracks the underlying share 1:1 and is economically identical to owning the share directly.
+        It's issued as bank debt rather than equity, so it adds one risk the share doesn't have:
+        <strong>issuer credit risk</strong>. If the bank fails, you lose — even if SAP is doing fine.
+        Mainly used when investors can't or don't want to hold shares directly (certain fund mandates, tax wrappers).
+        <div class="tc-analogy"><strong>Engineer analogy:</strong> a proxy object around a stock. No extra logic, just indirection — and now you're depending on the proxy staying alive.</div>
+      </div>
+    </div>
+
+    <div class="tc">
+      <div class="tc-head">
+        <div class="tc-dot" style="background:var(--c-disc)"></div>
+        <span class="tc-name">Discount certificate</span>
+        <span class="tc-risk" style="background:#ddf0e8;color:#0a4a34">Moderate</span>
+      </div>
+      <div class="tc-body">
+        You buy the underlying at a <strong>10% discount</strong> — €180 instead of €200. In exchange, your gains
+        are capped at a ceiling (€220). You beat the stock in flat or falling markets; you get left behind
+        in a strong rally. The structure is: long stock + short call at the cap. The call option premium
+        the bank collects is passed on to you as the discount.
+        <div class="tc-analogy"><strong>Engineer analogy:</strong> a rate-limited API. Full speed below the cap, hard throttle above it. You traded max throughput for a cheaper subscription tier.</div>
+      </div>
+    </div>
+
+    <div class="tc">
+      <div class="tc-head">
+        <div class="tc-dot" style="background:var(--c-cap)"></div>
+        <span class="tc-name">Capital protected note</span>
+        <span class="tc-risk" style="background:#e4f0d8;color:#224010">Lower risk</span>
+      </div>
+      <div class="tc-body">
+        Your €100 is guaranteed back at maturity no matter how far the stock falls.
+        In exchange, you only get <strong>60% of the upside</strong> above €200.
+        The mechanism: the bank uses ~85% of your money to buy a zero-coupon bond (guarantees €100 at maturity)
+        and spends the remaining €15 on a call option — which at current volatility only buys 60% participation.
+        The higher the interest rate, the more left over for the option and the better the participation rate.
+        <div class="tc-analogy"><strong>Engineer analogy:</strong> a try/catch with a guaranteed fallback value. The happy path can fail completely, but the function always returns at least 100.</div>
+      </div>
+    </div>
+
+    <div class="tc">
+      <div class="tc-head">
+        <div class="tc-dot" style="background:var(--c-turbo)"></div>
+        <span class="tc-name">Turbo / knock-out certificate</span>
+        <span class="tc-risk" style="background:#f8edd8;color:#7a4a08">High risk</span>
+      </div>
+      <div class="tc-body">
+        The bank lends you €160 (the <strong>strike</strong>) to buy the €200 share — you put in only €40.
+        Your €100 buys 2.5 turbos. Leverage at entry: 5× per turbo (200/40).
+        The <strong>barrier</strong> at €170 is the bank's circuit breaker: if the share touches €170
+        <em>at any point</em> — intraday, even momentarily — the product terminates immediately.
+        You receive a small residual: (barrier − strike) × quantity = (170−160) × 2.5 = €25.
+        The share can recover afterwards. It doesn't matter — the turbo is already dead.
+        <div class="tc-analogy"><strong>Engineer analogy:</strong> a process with a watchdog timer and no signal handler. If a threshold is breached, it receives SIGKILL. No cleanup, no restart, no recovery.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 03: PAYOFF AT MATURITY ── -->
+<section>
+  <span class="sec-tag">03 — INTERACTIVE</span>
+  <h2>Payoff at maturity — what you get back</h2>
+  <p class="prose">
+    You invest €100. SAP starts at €200. The chart shows what that €100 is worth when each product expires,
+    as a function of where SAP ends up. Drag the slider to move through scenarios.
+    Click any legend item to show or hide that product line.
+  </p>
+
+  <div class="iblock">
+    <div class="iblock-label">PAYOFF DIAGRAM — VALUE OF €100 INVESTED, AT MATURITY</div>
+    <div class="chart-lg"><canvas id="payoffChart"></canvas></div>
+
+    <div class="legend">
+      <div class="li" onclick="tglP(0)" id="pl0"><div class="li-dot" style="background:var(--c-stock)"></div>Direct stock</div>
+      <div class="li" onclick="tglP(1)" id="pl1"><div class="li-dot" style="background:var(--c-part)"></div>Participation cert</div>
+      <div class="li" onclick="tglP(2)" id="pl2"><div class="li-dot" style="background:var(--c-disc)"></div>Discount cert</div>
+      <div class="li" onclick="tglP(3)" id="pl3"><div class="li-dot" style="background:var(--c-cap)"></div>Capital protected</div>
+      <div class="li" onclick="tglP(4)" id="pl4"><div class="li-dot" style="background:var(--c-turbo)"></div>Turbo ×2.5</div>
+    </div>
+
+    <div class="sl-row">
+      <span class="sl-lbl">SAP at maturity</span>
+      <input type="range" id="msl" min="100" max="300" value="200" step="1">
+      <span class="sl-val" id="msl-out">€200</span>
+    </div>
+
+    <div class="vcg6">
+      <div class="vc">
+        <div class="vc-lbl"><div class="vc-dot" style="background:var(--c-stock)"></div>Direct stock</div>
+        <div class="vc-val" id="pv0">€100.00</div>
+        <div class="vc-chg" id="pg0" style="color:var(--text3)">—</div>
+        <div class="vc-note">0.5 shares × price</div>
+      </div>
+      <div class="vc">
+        <div class="vc-lbl"><div class="vc-dot" style="background:var(--c-part)"></div>Participation cert</div>
+        <div class="vc-val" id="pv1">€100.00</div>
+        <div class="vc-chg" id="pg1" style="color:var(--text3)">—</div>
+        <div class="vc-note">Same as stock + credit risk</div>
+      </div>
+      <div class="vc">
+        <div class="vc-lbl"><div class="vc-dot" style="background:var(--c-disc)"></div>Discount cert</div>
+        <div class="vc-val" id="pv2">€111.11</div>
+        <div class="vc-chg" id="pg2" style="color:var(--text3)">—</div>
+        <div class="vc-note">Bought at €180, cap at €220</div>
+      </div>
+      <div class="vc">
+        <div class="vc-lbl"><div class="vc-dot" style="background:var(--c-cap)"></div>Capital protected</div>
+        <div class="vc-val" id="pv3">€100.00</div>
+        <div class="vc-chg" id="pg3" style="color:var(--text3)">—</div>
+        <div class="vc-note">Floor €100, 60% upside</div>
+      </div>
+      <div class="vc">
+        <div class="vc-lbl"><div class="vc-dot" style="background:var(--c-turbo)"></div>Turbo ×2.5</div>
+        <div class="vc-val" id="pv4">€100.00</div>
+        <div class="vc-chg" id="pg4" style="color:var(--text3)">—</div>
+        <div class="vc-note">Strike €160, barrier €170</div>
+      </div>
+      <div class="vc-hint">
+        Try <strong>€150</strong> — capital protected stays at €100 while everything else falls.<br><br>
+        Try <strong>€280</strong> — turbo massively outperforms; discount cert is capped and left behind.
+      </div>
+    </div>
+
+    <div class="ko" id="ko-p">
+      <strong>Knock-out zone.</strong> The turbo barrier (€170) has been breached.
+      You receive €25 residual = (€170 − €160) × 2.5 turbos. All other products continue normally.
+    </div>
+  </div>
+</section>
+
+<!-- ── 04: TIME SIMULATION ── -->
+<section>
+  <span class="sec-tag">04 — INTERACTIVE</span>
+  <h2>How values change over time</h2>
+  <p class="prose">
+    The payoff diagram shows the end state. But during the product's life, values fluctuate every day.
+    This simulation runs SAP through a realistic 100-day scenario: an initial rise, then a sharp correction
+    that triggers the turbo's knock-out barrier, then a full recovery past the starting price.
+  </p>
+  <p class="prose">
+    Hit <strong>Play</strong> and watch what happens. The critical moment is around Day 40 — SAP briefly
+    dips through €170, the turbo is terminated, and its value freezes at €25. The stock then recovers and
+    ends 9% higher than where it started. Every other product participates in that recovery. The turbo does not.
+    This is the defining characteristic that data systems have to handle in real time.
+  </p>
+
+  <div class="iblock">
+    <div class="play-row">
+      <button class="play-btn" id="pbtn" onclick="tglPlay()">Play</button>
+      <input type="range" id="tsl" min="0" max="99" value="0" step="1" style="flex:1;">
+      <span class="day-lbl"><strong id="d-day">Day 0</strong>&thinsp;/ 99</span>
+    </div>
+
+    <div class="iblock-label">SAP PRICE PATH</div>
+    <div class="chart-sm"><canvas id="priceChart"></canvas></div>
+
+    <div class="iblock-label chart-gap">VALUE OF YOUR €100 INVESTMENT</div>
+    <div class="chart-lg"><canvas id="valChart"></canvas></div>
+
+    <div class="legend">
+      <div class="li" id="tl0"><div class="li-dot" style="background:var(--c-stock)"></div>Stock</div>
+      <div class="li" id="tl1"><div class="li-dot" style="background:var(--c-part)"></div>Participation</div>
+      <div class="li" id="tl2"><div class="li-dot" style="background:var(--c-disc)"></div>Discount</div>
+      <div class="li" id="tl3"><div class="li-dot" style="background:var(--c-cap)"></div>Capital protected</div>
+      <div class="li" id="tl4"><div class="li-dot" style="background:var(--c-turbo)"></div>Turbo</div>
+    </div>
+
+    <div class="vcg5">
+      <div class="vc">
+        <div class="vc-lbl"><div class="vc-dot" style="background:var(--c-stock)"></div>Stock</div>
+        <div class="vc-val" id="tv0">€100.00</div>
+        <div class="vc-chg" id="tc0" style="color:var(--text3)">Day 0</div>
+      </div>
+      <div class="vc">
+        <div class="vc-lbl"><div class="vc-dot" style="background:var(--c-part)"></div>Participation</div>
+        <div class="vc-val" id="tv1">€100.00</div>
+        <div class="vc-chg" id="tc1" style="color:var(--text3)">Day 0</div>
+      </div>
+      <div class="vc">
+        <div class="vc-lbl"><div class="vc-dot" style="background:var(--c-disc)"></div>Discount</div>
+        <div class="vc-val" id="tv2">€100.00</div>
+        <div class="vc-chg" id="tc2" style="color:var(--text3)">Day 0</div>
+      </div>
+      <div class="vc">
+        <div class="vc-lbl"><div class="vc-dot" style="background:var(--c-cap)"></div>Cap. protected</div>
+        <div class="vc-val" id="tv3">€100.00</div>
+        <div class="vc-chg" id="tc3" style="color:var(--text3)">Day 0</div>
+      </div>
+      <div class="vc">
+        <div class="vc-lbl"><div class="vc-dot" style="background:var(--c-turbo)"></div>Turbo</div>
+        <div class="vc-val" id="tv4">€100.00</div>
+        <div class="vc-chg" id="tc4" style="color:var(--text3)">Day 0</div>
+      </div>
+    </div>
+
+    <div class="ko" id="ko-t"></div>
+  </div>
+</section>
+
+<!-- ── 05: TAKEAWAYS ── -->
+<section>
+  <span class="sec-tag">05 — KEY LESSONS</span>
+  <h2>What to remember</h2>
+  <div class="ta-list">
+    <div class="ta">
+      <span class="ta-num">01</span>
+      <span class="ta-text">
+        <strong>The turbo knock-out is permanent and instantaneous.</strong>
+        The barrier is checked continuously — intraday, not just at close.
+        A brief dip that recovers the same afternoon is enough to terminate the product forever.
+        This is why bank risk systems treating barrier monitoring as a real-time, mission-critical function —
+        every tick in the underlying price feed triggers a check against every outstanding barrier level.
+      </span>
+    </div>
+    <div class="ta">
+      <span class="ta-num">02</span>
+      <span class="ta-text">
+        <strong>The discount certificate outperforms in flat or falling markets.</strong>
+        You bought at a 10% discount, so you're ahead from day one if the stock stays around €200.
+        The cap only hurts you in strong rallies. Investors who expect a sideways or mildly bullish market
+        pick this over direct stock ownership. Investors who expect a big move don't.
+      </span>
+    </div>
+    <div class="ta">
+      <span class="ta-num">03</span>
+      <span class="ta-text">
+        <strong>Capital protection has a hard cost tied to interest rates.</strong>
+        At low rates, most of your €100 goes into the bond (PV of €100 might be €92 if rates are low),
+        leaving only €8 for the option. That buys very little participation — maybe 40%.
+        At higher rates, the bond costs less (say €85), leaving €15 for the option, buying 60% participation.
+        This is why capital-protected products were almost unsellable during the 2010s zero-rate era.
+      </span>
+    </div>
+    <div class="ta">
+      <span class="ta-num">04</span>
+      <span class="ta-text">
+        <strong>All structured products carry issuer credit risk that owning a share directly does not.</strong>
+        When you hold SAP shares, you own equity in SAP. When you hold a structured product, you own
+        an unsecured debt obligation of the issuing bank. If Deutsche Bank fails, your claim on the SAP
+        exposure goes into the insolvency queue alongside other creditors — even if SAP itself is at an all-time high.
+      </span>
+    </div>
+    <div class="ta">
+      <span class="ta-num">05</span>
+      <span class="ta-text">
+        <strong>The data engineering challenge is scale, not complexity.</strong>
+        Barrier checking is simple logic. But Frankfurt alone lists 1.8 million structured product ISINs.
+        Each has a reference to an underlying, a barrier level, a strike, and a maturity. Every tick in any
+        underlying price triggers lookups against all associated products. Maintaining accurate reference data
+        for 1.8 million instruments — especially across corporate actions like splits and dividends that
+        require mechanical adjustment of barrier and strike levels — is where the operational complexity lives.
+      </span>
+    </div>
+  </div>
+</section>
+
+<footer>
+  Illustrative numbers only — SAP used as a representative European large-cap.
+  Products of this type are primarily listed on Börse Stuttgart (EUWAX) and Börse Frankfurt (Deutsche Börse).
+  Not investment advice. All payoff formulas are simplified for educational clarity.
+</footer>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+var D=window.matchMedia&&window.matchMedia('(prefers-color-scheme:dark)').matches;
+var GC=D?'rgba(255,255,255,0.04)':'rgba(0,0,0,0.04)';
+var TC=D?'#686663':'#9a9892';
+var ZC=D?'rgba(255,255,255,0.15)':'rgba(0,0,0,0.12)';
+var COLS=[D?'#9a9892':'#6b6966',D?'#4a90d4':'#1660a0',D?'#2aaa82':'#0d6650',D?'#70c040':'#356012',D?'#e09030':'#b07015'];
+
+/* ── PAYOFF CHART ── */
+var PX=[];for(var i=100;i<=300;i++)PX.push(i);
+function sF(P){return 100*P/200;}
+function dF(P){return(100/180)*Math.min(P,220);}
+function cF(P){return Math.max(100,100+0.6*(P-200));}
+function tF(P){return P<=170?25:2.5*(P-160);}
+
+var pChart=new Chart(document.getElementById('payoffChart').getContext('2d'),{
+  type:'line',
+  data:{
+    labels:PX.map(function(p){return'€'+p;}),
+    datasets:[
+      {data:PX.map(sF),borderColor:COLS[0],borderWidth:2,pointRadius:0,tension:0,fill:false},
+      {data:PX.map(sF),borderColor:COLS[1],borderWidth:2,pointRadius:0,tension:0,fill:false,borderDash:[7,4]},
+      {data:PX.map(dF),borderColor:COLS[2],borderWidth:2,pointRadius:0,tension:0,fill:false},
+      {data:PX.map(cF),borderColor:COLS[3],borderWidth:2,pointRadius:0,tension:0,fill:false},
+      {data:PX.map(tF),borderColor:COLS[4],borderWidth:2.5,pointRadius:0,tension:0,fill:false},
+      {data:PX.map(function(){return 100;}),borderColor:ZC,borderWidth:1,borderDash:[3,3],pointRadius:0,fill:false},
+      {data:PX.map(function(p,i){return i===100?290:null;}),borderColor:'rgba(128,128,128,0.22)',borderWidth:1.5,pointRadius:0,fill:false,spanGaps:false}
+    ]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,animation:false,
+    plugins:{legend:{display:false},tooltip:{mode:'index',intersect:false,callbacks:{
+      title:function(it){return'SAP at €'+PX[it[0].dataIndex];},
+      label:function(it){
+        if(it.datasetIndex>=5)return null;
+        var n=['Stock','Participation','Discount','Cap. protected','Turbo'][it.datasetIndex];
+        return n+': €'+parseFloat(it.raw).toFixed(2);
+      }
+    }}},
+    scales:{
+      x:{ticks:{maxTicksLimit:11,callback:function(v,i){return i%20===0?'€'+PX[i]:'';},color:TC,font:{size:11}},grid:{color:GC}},
+      y:{min:0,max:280,ticks:{callback:function(v){return'€'+v;},color:TC,font:{size:11}},grid:{color:GC}}
+    }
+  }
+});
+
+var pH=[false,false,false,false,false];
+var vIdx=6;
+
+function tglP(i){
+  pH[i]=!pH[i];
+  pChart.data.datasets[i].hidden=pH[i];
+  pChart.update('none');
+  document.getElementById('pl'+i).classList.toggle('dim',pH[i]);
+}
+
+var POS_C='#1a7a50',NEG_C='#a02828';
+function gainStyle(el,g){el.style.color=g>0.5?POS_C:g<-0.5?NEG_C:TC;}
+
+function updPayoff(P){
+  var idx=P-100,ko=P<=170;
+  var vs=[sF(P),sF(P),dF(P),cF(P),tF(P)];
+  for(var i=0;i<5;i++){
+    var g=vs[i]-100,s=g>=0?'+':'';
+    document.getElementById('pv'+i).textContent='€'+vs[i].toFixed(2);
+    var el=document.getElementById('pg'+i);
+    el.textContent=s+'€'+g.toFixed(2)+' ('+s+g.toFixed(1)+'%)';
+    gainStyle(el,g);
+  }
+  pChart.data.datasets[vIdx].data=PX.map(function(p,i){return i===idx?280:null;});
+  pChart.update('none');
+  document.getElementById('ko-p').style.display=ko?'block':'none';
+}
+
+document.getElementById('msl').addEventListener('input',function(){
+  var P=parseInt(this.value);
+  document.getElementById('msl-out').textContent='€'+P;
+  updPayoff(P);
+});
+updPayoff(200);
+
+/* ── PRICE PATH ── */
+function genPath(){
+  var p=[];
+  for(var d=0;d<100;d++){
+    var t;
+    if(d<15){t=200+(d/14)*17;}
+    else if(d<46){t=217-((d-14)/32)*58;}
+    else{t=159+((d-45)/54)*60;}
+    var n=1.9*Math.sin(d*0.71)-1.2*Math.sin(d*1.34)+0.7*Math.sin(d*2.28)+0.4*Math.sin(d*3.1);
+    p.push(Math.round((t+n)*100)/100);
+  }
+  return p;
+}
+var PATH=genPath();
+
+/* find KO day */
+var KO_DAY=null;
+for(var d=0;d<PATH.length;d++){if(PATH[d]<=170){KO_DAY=d;break;}}
+
+/* compute time series (all normalize to 100 at d=0) */
+function compSeries(){
+  var S={s:[],p:[],di:[],c:[],t:[]};
+  for(var d=0;d<100;d++){
+    var P=PATH[d];
+    var ko=KO_DAY!==null&&d>=KO_DAY;
+    S.s.push(+(100*P/200).toFixed(2));
+    S.p.push(+(100*P/200).toFixed(2));
+    S.di.push(+(Math.min(P,220)/200*100).toFixed(2));
+    S.c.push(+(Math.max(100,100+0.6*Math.max(0,P-200))).toFixed(2));
+    S.t.push(ko?25:+(2.5*Math.max(0,P-160)).toFixed(2));
+  }
+  return S;
+}
+var SER=compSeries();
+var DLBLS=PATH.map(function(p,i){return'Day '+i;});
+
+/* ── PRICE CHART ── */
+var priceChart=new Chart(document.getElementById('priceChart').getContext('2d'),{
+  type:'line',
+  data:{labels:['Day 0'],datasets:[
+    {data:[PATH[0]],borderColor:D?'#4a90d4':'#1660a0',borderWidth:2,pointRadius:0,tension:0.35,fill:false},
+    {data:[170],borderColor:D?'#e86060':'#d84040',borderWidth:1.5,borderDash:[5,3],pointRadius:0,fill:false},
+    {data:[160],borderColor:TC,borderWidth:1,borderDash:[3,3],pointRadius:0,fill:false}
+  ]},
+  options:{
+    responsive:true,maintainAspectRatio:false,animation:false,
+    plugins:{legend:{display:false},tooltip:{callbacks:{
+      title:function(it){return it[0].label;},
+      label:function(it){
+        if(it.datasetIndex===0)return'SAP: €'+parseFloat(it.raw).toFixed(2);
+        if(it.datasetIndex===1)return'Barrier: €170';
+        return'Strike: €160';
+      }
+    }}},
+    scales:{
+      x:{ticks:{maxTicksLimit:10,color:TC,font:{size:11}},grid:{color:GC}},
+      y:{min:148,max:228,ticks:{callback:function(v){return'€'+v;},color:TC,font:{size:11}},grid:{color:GC}}
+    }
+  }
+});
+
+/* ── VALUE CHART ── */
+var maxV=0;
+['s','p','di','c','t'].forEach(function(k){SER[k].forEach(function(v){if(v>maxV)maxV=v;});});
+var yMax=Math.ceil(maxV/10)*10+15;
+
+var valChart=new Chart(document.getElementById('valChart').getContext('2d'),{
+  type:'line',
+  data:{labels:['Day 0'],datasets:[
+    {data:[SER.s[0]],borderColor:COLS[0],borderWidth:2,pointRadius:0,tension:0.35,fill:false},
+    {data:[SER.p[0]],borderColor:COLS[1],borderWidth:2,pointRadius:0,tension:0.35,fill:false,borderDash:[7,4]},
+    {data:[SER.di[0]],borderColor:COLS[2],borderWidth:2,pointRadius:0,tension:0.35,fill:false},
+    {data:[SER.c[0]],borderColor:COLS[3],borderWidth:2,pointRadius:0,tension:0.35,fill:false},
+    {data:[SER.t[0]],borderColor:COLS[4],borderWidth:2.5,pointRadius:0,tension:0.35,fill:false},
+    {data:[100],borderColor:ZC,borderWidth:1,borderDash:[3,3],pointRadius:0,fill:false}
+  ]},
+  options:{
+    responsive:true,maintainAspectRatio:false,animation:false,
+    plugins:{legend:{display:false},tooltip:{mode:'index',intersect:false,callbacks:{
+      title:function(it){return it[0].label;},
+      label:function(it){
+        if(it.datasetIndex===5)return null;
+        var n=['Stock','Participation','Discount','Cap.prot.','Turbo'][it.datasetIndex];
+        return n+': €'+parseFloat(it.raw).toFixed(2);
+      }
+    }}},
+    scales:{
+      x:{ticks:{maxTicksLimit:10,color:TC,font:{size:11}},grid:{color:GC}},
+      y:{min:0,max:yMax,ticks:{callback:function(v){return'€'+v;},color:TC,font:{size:11}},grid:{color:GC}}
+    }
+  }
+});
+
+function updTime(day){
+  var n=day+1;
+  var lbls=DLBLS.slice(0,n);
+  var bLine=lbls.map(function(){return 170;});
+  var sLine=lbls.map(function(){return 160;});
+  var zLine=lbls.map(function(){return 100;});
+
+  priceChart.data.labels=lbls;
+  priceChart.data.datasets[0].data=PATH.slice(0,n);
+  priceChart.data.datasets[1].data=bLine;
+  priceChart.data.datasets[2].data=sLine;
+  priceChart.update('none');
+
+  valChart.data.labels=lbls;
+  valChart.data.datasets[0].data=SER.s.slice(0,n);
+  valChart.data.datasets[1].data=SER.p.slice(0,n);
+  valChart.data.datasets[2].data=SER.di.slice(0,n);
+  valChart.data.datasets[3].data=SER.c.slice(0,n);
+  valChart.data.datasets[4].data=SER.t.slice(0,n);
+  valChart.data.datasets[5].data=zLine;
+  valChart.update('none');
+
+  document.getElementById('d-day').textContent='Day '+day;
+  document.getElementById('tsl').value=day;
+
+  var keys=['s','p','di','c','t'];
+  var init=[100,100,100,100,100];
+  for(var i=0;i<5;i++){
+    var v=SER[keys[i]][day],g=v-init[i],s=g>=0?'+':'';
+    document.getElementById('tv'+i).textContent='€'+v.toFixed(2);
+    var el=document.getElementById('tc'+i);
+    el.textContent=s+'€'+g.toFixed(2)+' ('+s+g.toFixed(1)+'%)';
+    gainStyle(el,g);
+  }
+
+  var isKO=KO_DAY!==null&&day>=KO_DAY;
+  var kb=document.getElementById('ko-t');
+  if(isKO){
+    kb.style.display='block';
+    kb.innerHTML='<strong>Knock-out occurred on Day '+KO_DAY+'.</strong> SAP touched €'+PATH[KO_DAY].toFixed(2)+' (barrier: €170). The turbo was terminated immediately — residual paid: €25. SAP is now at €'+PATH[day].toFixed(2)+'. The turbo remains frozen at €25 regardless of any subsequent recovery.';
+  }else{
+    kb.style.display='none';
+  }
+}
+
+updTime(0);
+
+var playing=false,timer=null,curDay=0;
+
+function tglPlay(){
+  playing=!playing;
+  document.getElementById('pbtn').textContent=playing?'Pause':'Play';
+  if(playing){
+    if(curDay>=99){curDay=0;updTime(0);}
+    timer=setInterval(function(){
+      curDay++;
+      updTime(curDay);
+      if(curDay>=99){clearInterval(timer);playing=false;document.getElementById('pbtn').textContent='Play';}
+    },110);
+  }else{
+    clearInterval(timer);
+  }
+}
+
+document.getElementById('tsl').addEventListener('mousedown',function(){
+  if(playing){tglPlay();}
+});
+document.getElementById('tsl').addEventListener('input',function(){
+  curDay=parseInt(this.value);
+  updTime(curDay);
+});
+</script>
+</body>
+</html>

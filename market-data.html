@@ -157,6 +157,15 @@
   ::-webkit-scrollbar { width:5px; height:5px; }
   ::-webkit-scrollbar-track { background:var(--bg); }
   ::-webkit-scrollbar-thumb { background:var(--border); }
+
+  /* glossary definition list */
+  .def-list{margin:0;}
+  .def-list dt{font-size:.68rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:1.25rem 0 .3rem;}
+  .def-list dt:first-child{margin-top:0;}
+  .def-list dd{font-size:.875rem;color:#3a3835;line-height:1.7;margin:0;padding-bottom:1.1rem;border-bottom:1px solid var(--rule);}
+  .def-list dd:last-child{border-bottom:none;padding-bottom:0;}
+  .def-list dd strong{color:var(--text);font-weight:600;}
+  @media(prefers-color-scheme:dark){.def-list dd{color:var(--text2);}}
 </style>
 </head>
 <body>
@@ -176,6 +185,7 @@
     <button class="tab" data-t="der">Derivatives</button>
     <button class="tab" data-t="fund">Funds &amp; ETFs</button>
     <button class="tab" data-t="qt">Quote &amp; Time Series</button>
+    <button class="tab" data-t="gl">Glossary</button>
   </div>
 </div>
 
@@ -716,6 +726,149 @@
       DST transitions in March/October cause one-hour shifts. Always store UTC, convert to local only for display.
     </div>
   </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     TAB 8 — GLOSSARY
+═══════════════════════════════════════════ -->
+<div class="panel" id="panel-gl">
+  <div class="sec-head">
+    <div class="sec-num">08 — Glossary</div>
+    <h2>Key Terms Reference</h2>
+    <p>Definitions for the financial and data concepts used throughout this guide, organised by domain.</p>
+  </div>
+
+  <div class="sub-label">Data fundamentals</div>
+  <dl class="def-list">
+    <dt>Bid</dt>
+    <dd>The highest price a buyer is currently willing to pay for a security. If you sell immediately ("at market"), you receive the bid. Market makers post bids continuously and profit from the spread between bid and ask.</dd>
+
+    <dt>Ask (Offer)</dt>
+    <dd>The lowest price a seller is currently willing to accept. If you buy immediately, you pay the ask. The ask is always higher than the bid; the gap between them is the spread.</dd>
+
+    <dt>Spread</dt>
+    <dd>The difference between the ask and bid prices. The market maker's implicit fee, built into the price rather than charged separately. Tight spreads (e.g. 0.5 pips on EUR/USD) indicate high liquidity; wide spreads indicate low liquidity or elevated risk.</dd>
+
+    <dt>OHLCV</dt>
+    <dd><strong>Open, High, Low, Close, Volume.</strong> The five standard fields in a price bar (candlestick). Open and close are the first and last traded prices in the period; high and low are the extremes reached; volume is the total number of units traded.</dd>
+
+    <dt>ISIN</dt>
+    <dd><strong>International Securities Identification Number</strong> (ISO 6166). A 12-character code that globally identifies a security. Format: 2-letter country code + 9-character identifier + check digit. Example: US0378331005 for Apple Inc. One ISIN can have many exchange listings — always pair it with a MIC to get a unique price.</dd>
+
+    <dt>MIC</dt>
+    <dd><strong>Market Identifier Code</strong> (ISO 10383). A 4-character code identifying an exchange or trading venue. Examples: XETR (Xetra), XLON (London Stock Exchange), XNYS (NYSE). Required alongside an ISIN to uniquely identify a listing and its price.</dd>
+
+    <dt>SEDOL</dt>
+    <dd><strong>Stock Exchange Daily Official List.</strong> A 7-character identifier used primarily in UK and Irish markets, issued by the London Stock Exchange. Widely used in European financial systems alongside ISIN.</dd>
+
+    <dt>WKN</dt>
+    <dd><strong>Wertpapierkennnummer.</strong> Germany's 6-character security identifier, used before ISIN became the standard. Still common in German retail brokerage systems. Every German-listed security has both a WKN and an ISIN.</dd>
+
+    <dt>Reference data</dt>
+    <dd>Static, descriptive information about a security — what it <em>is</em>, not what it costs. Includes: name, ISIN, exchange, currency, coupon rate, maturity date. Changes infrequently. Cache aggressively; treat like a configuration file, not a live stream. Invalidate on corporate action events.</dd>
+
+    <dt>Quote data</dt>
+    <dd>Dynamic pricing information — current bid, ask, last price, volume. Can change thousands of times per second for liquid instruments. Three freshness tiers: <strong>real-time</strong> (millisecond latency, requires exchange entitlement), <strong>delayed</strong> (15–20 min lag), <strong>EOD</strong> (once daily at close).</dd>
+
+    <dt>Corporate action</dt>
+    <dd>An event issued by a company that changes its securities: dividends, stock splits, rights issues, mergers, spin-offs. The most common source of silent data bugs in financial systems, because they retroactively change the meaning of historical prices without generating a trade.</dd>
+
+    <dt>Adjusted price</dt>
+    <dd>A historical price modified to account for corporate actions so that charts and return calculations remain continuous. A 2-for-1 split halves all pre-split closing prices. A dividend subtracts the payout from all pre-ex-date prices. The alternative — unadjusted (raw) prices — shows actual traded prices with visible discontinuities.</dd>
+  </dl>
+
+  <div class="sub-label">Equities</div>
+  <dl class="def-list">
+    <dt>VWAP</dt>
+    <dd><strong>Volume-Weighted Average Price.</strong> The average price weighted by trading volume over a session: Σ(price × volume) ÷ Σ(volume). Institutional traders benchmark execution quality against VWAP — buying below it is considered a good fill. Published as a real-time field in intraday quote data.</dd>
+
+    <dt>Ex-date</dt>
+    <dd>The first date on which a buyer of the stock is <em>not</em> entitled to the next dividend or rights issue. Buy on or after the ex-date and you will not receive the upcoming payment. Share price typically drops by the dividend amount on this date, which is an adjustment in price not a loss.</dd>
+
+    <dt>T+2 settlement</dt>
+    <dd>The standard equity settlement cycle: legal transfer of cash and shares occurs two business days after the trade date. Corporate action entitlements (dividends, rights) are based on settlement date, not trade date — a frequent source of bugs when the distinction is ignored.</dd>
+
+    <dt>Market capitalisation</dt>
+    <dd>Total market value of a company's outstanding shares: share price × shares outstanding. Used to classify companies (large-cap >$10B, mid-cap, small-cap) and to weight index constituents. Changes continuously with the share price.</dd>
+
+    <dt>P/E ratio</dt>
+    <dd><strong>Price-to-Earnings ratio.</strong> Share price divided by earnings per share (EPS). Indicates how much investors pay per unit of annual profit. A P/E of 25 means investors pay €25 for every €1 of earnings. High P/E implies growth expectations or optimism; low P/E may signal value, cyclicality, or distress.</dd>
+  </dl>
+
+  <div class="sub-label">Bonds &amp; fixed income</div>
+  <dl class="def-list">
+    <dt>Coupon</dt>
+    <dd>The periodic interest payment a bond issuer makes to holders. Expressed as an annual percentage of face value. A 5% coupon on a €1,000 bond pays €50/year (€25 semi-annually). Fixed at issuance and does not change over the bond's life, even as market interest rates move.</dd>
+
+    <dt>Face value (par)</dt>
+    <dd>The principal amount repaid to the holder at maturity — typically €1,000 or €100. Also the reference amount for coupon calculations. Bond prices are quoted as a percentage of face value: a price of 98 = €980 per €1,000 face. Prices below 100 are "at a discount"; above 100, "at a premium".</dd>
+
+    <dt>Yield to maturity (YTM)</dt>
+    <dd>The annualised total return if a bond is held to maturity, accounting for coupon payments, time remaining, and the difference between current price and face value. The key inverse relationship: when bond prices rise, yields fall, and vice versa. YTM is to bonds what earnings yield is to equities.</dd>
+
+    <dt>Clean price</dt>
+    <dd>The bond price <em>excluding</em> accrued interest. The price shown on trading screens and market data feeds. Two bonds with identical structure and credit quality trade at the same clean price regardless of where they are in their coupon cycle — making clean prices directly comparable.</dd>
+
+    <dt>Dirty price</dt>
+    <dd>The actual cash paid to buy a bond: <code>dirty = clean + accrued interest</code>. Settlement always occurs at dirty price. The difference between clean and dirty grows linearly between coupon dates, then resets to zero on each payment date — which is why bond price charts show a sawtooth pattern if dirty prices are used.</dd>
+
+    <dt>Accrued interest</dt>
+    <dd>Interest earned since the last coupon payment but not yet paid. When you buy a bond mid-cycle, you compensate the seller for their share of the next coupon. Calculated daily using a day count convention (e.g. Actual/Actual for government bonds, 30/360 for corporate bonds in some markets).</dd>
+
+    <dt>Duration</dt>
+    <dd>A bond's sensitivity to interest rate changes. A duration of 8 means the price falls approximately 8% for a 1% rise in yield. Longer maturities and lower coupons produce higher duration (more rate sensitivity). <strong>Modified duration</strong> adjusts for the current yield level and is the standard risk measure used in fixed income.</dd>
+  </dl>
+
+  <div class="sub-label">Foreign exchange</div>
+  <dl class="def-list">
+    <dt>Pip</dt>
+    <dd><strong>Percentage in Point.</strong> The smallest standard increment in FX quoting. For EUR/USD (4 decimal places), one pip = 0.0001. A move from 1.0850 to 1.0851 is one pip. Used to express spread size and daily ranges in a unit that is currency-neutral and easy to compare across pairs.</dd>
+
+    <dt>Cross rate</dt>
+    <dd>An exchange rate between two currencies that does not involve USD. EUR/JPY is derived from EUR/USD × USD/JPY. Most FX liquidity is against USD; crosses are computed synthetically and typically have wider spreads than major (USD) pairs. Data feeds may publish cross rates as computed values rather than direct quotes.</dd>
+
+    <dt>ECB / WMR fixing</dt>
+    <dd>Point-in-time FX snapshots used as official reference rates. The <strong>ECB fix</strong> is published at 16:00 CET (used for EU regulatory reporting and some fund valuations). The <strong>WMR fix</strong> at 16:00 London is the global standard for fund NAV calculations and structured product settlement. DST transitions shift these in UTC — always compute fixing windows in local time, not UTC offset.</dd>
+  </dl>
+
+  <div class="sub-label">Derivatives</div>
+  <dl class="def-list">
+    <dt>Option</dt>
+    <dd>A contract giving the buyer the <strong>right but not the obligation</strong> to buy (call) or sell (put) an underlying at a specified strike price on or before the expiry date. The buyer pays a premium upfront. Maximum loss for the buyer is limited to the premium; maximum gain is theoretically unlimited (for calls).</dd>
+
+    <dt>Implied volatility (IV)</dt>
+    <dd>The market's expectation of future price variability, derived by working backwards from an option's market price using a pricing model. Higher IV means larger expected moves — options are more expensive. IV spikes during uncertainty (earnings releases, geopolitical events). Comparing IV to historical volatility reveals whether options are "cheap" or "expensive".</dd>
+
+    <dt>Delta</dt>
+    <dd>The change in an option's price for a €1 move in the underlying. Delta 0.5 means the option price changes €0.50 per €1 move. Deep in-the-money options approach delta 1; out-of-the-money options approach 0. Also interpreted as the probability of expiring in-the-money. Used by market makers to hedge directional exposure.</dd>
+
+    <dt>Theta</dt>
+    <dd>The daily erosion of an option's value due purely to the passage of time, all else equal. Options are <em>wasting assets</em> — they lose value every day, accelerating as expiry approaches. A theta of −0.05 means the option loses €0.05 of value per calendar day. Theta is negative for option buyers, positive for sellers.</dd>
+
+    <dt>Open interest</dt>
+    <dd>The total number of open (unsettled) contracts for a specific option or futures series. A liquidity and participation indicator. Rising open interest alongside rising prices is typically a bullish signal (new money entering); rising open interest with falling prices is bearish. Watch for large open interest near key strikes — they can act as price magnets near expiry.</dd>
+  </dl>
+
+  <div class="sub-label">Funds &amp; ETFs</div>
+  <dl class="def-list">
+    <dt>NAV</dt>
+    <dd><strong>Net Asset Value.</strong> Per-share value of a fund: (total assets − liabilities) ÷ shares outstanding. Mutual fund NAV is calculated once daily at market close and published T+1. ETF NAV is also daily, but ETFs additionally have a continuous intraday market price — the difference between the two is the premium or discount.</dd>
+
+    <dt>iNAV</dt>
+    <dd><strong>Indicative NAV.</strong> A real-time estimate of an ETF's NAV, published by the exchange every 15 seconds during trading hours. Derived from live prices of the underlying holdings. Used by traders to assess whether the ETF is trading at a fair premium or discount to its underlying basket.</dd>
+
+    <dt>TER</dt>
+    <dd><strong>Total Expense Ratio.</strong> The annual cost of owning a fund, expressed as a percentage of AUM. Deducted daily from the fund's assets rather than charged as a separate fee — so the NAV already reflects costs. A TER of 0.20% costs €2/year per €1,000 invested. Lower TER = more return retained by the investor.</dd>
+
+    <dt>Accumulating (Acc) vs Distributing (Dist)</dt>
+    <dd>Two share class types. <strong>Accumulating</strong> funds reinvest dividends and coupons — NAV grows over time to reflect reinvested income. <strong>Distributing</strong> funds pay income out periodically — NAV drops by the distribution amount on ex-date. Tax treatment and the appearance of historical NAV charts differ significantly between the two.</dd>
+
+    <dt>UCITS</dt>
+    <dd><strong>Undertakings for Collective Investment in Transferable Securities.</strong> The European regulatory framework for retail investment funds. A UCITS fund can be sold across all EU member states with a single registration ("fund passport"). Sets rules on diversification, eligible assets, leverage, and disclosure. Most European ETFs and mutual funds are UCITS-compliant.</dd>
+
+    <dt>Authorized participant (AP)</dt>
+    <dd>An institution (typically a large bank or market maker) with the right to create and redeem ETF shares in large blocks directly with the fund. APs arbitrage away any premium or discount between the ETF's market price and its NAV — if the ETF trades above NAV, an AP buys the underlying basket, delivers it to the fund, receives ETF shares, and sells them. This mechanism keeps ETF prices tightly aligned with NAV.</dd>
+  </dl>
 </div>
 
 <script>

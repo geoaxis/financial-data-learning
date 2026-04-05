@@ -117,11 +117,14 @@ footer{border-top:0.5px solid var(--border);padding-top:22px;font-size:12px;colo
 
 /* glossary definition list */
 .def-list{margin:0;}
-.def-list dt{font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--text3);margin:20px 0 5px;}
+.def-list dt{font-size:11px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--text3);margin:20px 0 5px;position:relative;cursor:help;}
 .def-list dt:first-child{margin-top:0;}
 .def-list dd{font-size:13px;color:var(--text2);line-height:1.65;margin:0;padding-bottom:20px;border-bottom:0.5px solid var(--border);}
 .def-list dd:last-child{border-bottom:none;padding-bottom:0;}
 .def-list dd strong{color:var(--text);font-weight:500;}
+.def-list dt a{color:inherit;text-decoration:none;border-bottom:1px dotted currentColor;padding-bottom:1px;}
+.def-list dt a:hover{opacity:0.7;}
+.def-list dt[data-tip]:hover::after{content:attr(data-tip);position:absolute;left:0;top:calc(100% + 5px);background:var(--text);color:var(--bg);font-size:11px;font-weight:400;letter-spacing:0;text-transform:none;white-space:normal;line-height:1.55;padding:7px 11px;border-radius:6px;max-width:280px;min-width:160px;z-index:100;pointer-events:none;box-shadow:0 3px 12px rgba(0,0,0,0.18);}
 </style>
 </head>
 <body>
@@ -452,45 +455,45 @@ footer{border-top:0.5px solid var(--border);padding-top:22px;font-size:12px;colo
 <section>
   <span class="sec-tag">06 — GLOSSARY</span>
   <h2>Key terms</h2>
-  <p class="prose">A reference for the financial vocabulary used throughout this guide.</p>
+  <p class="prose">A reference for the financial vocabulary used throughout this guide. Hover any term for a plain-English summary — click to open the Wikipedia article.</p>
   <dl class="def-list">
-    <dt>Structured product</dt>
+    <dt data-tip="A bank-issued investment that bundles a bond and an option into one tradeable security with a custom payoff."><a href="https://en.wikipedia.org/wiki/Structured_product" target="_blank" rel="noopener">Structured product</a></dt>
     <dd>A bank-issued financial instrument that combines a <strong>bond</strong> with an <strong>option</strong> to create a custom risk/reward profile. Traded on exchanges like Börse Stuttgart (EUWAX) and Börse Frankfurt. Bought and sold through a normal brokerage account alongside stocks and ETFs.</dd>
 
-    <dt>Underlying</dt>
+    <dt data-tip="The asset whose price determines what the structured product pays out — e.g. a share, index, or commodity."><a href="https://en.wikipedia.org/wiki/Underlying" target="_blank" rel="noopener">Underlying</a></dt>
     <dd>The reference asset the product is linked to — a share (SAP, ASML), an index (DAX, S&P 500), or a commodity. The underlying's price drives the product's payoff. You do not own the underlying itself; you hold a bank-issued claim on its performance.</dd>
 
-    <dt>ISIN</dt>
+    <dt data-tip="A 12-character global code that uniquely identifies any security — like a barcode for a financial instrument."><a href="https://en.wikipedia.org/wiki/International_Securities_Identification_Number" target="_blank" rel="noopener">ISIN</a></dt>
     <dd><strong>International Securities Identification Number.</strong> A 12-character alphanumeric code that globally identifies a security (e.g. DE0007164600 for SAP SE). Every structured product listed on a European exchange receives its own ISIN at issuance.</dd>
 
-    <dt>Strike</dt>
+    <dt data-tip="The reference price fixed at issuance — used to calculate gains, leverage, or protection levels."><a href="https://en.wikipedia.org/wiki/Strike_price" target="_blank" rel="noopener">Strike</a></dt>
     <dd>The reference price fixed at issuance. For a <strong>turbo</strong>, the bank finances the underlying up to the strike — you pay only the difference (the product price). For a <strong>capital protected note</strong>, the strike is the level above which upside participation is calculated.</dd>
 
-    <dt>Barrier</dt>
+    <dt data-tip="A price tripwire — if the underlying touches it at any point during trading hours, the product terminates immediately."><a href="https://en.wikipedia.org/wiki/Barrier_option" target="_blank" rel="noopener">Barrier</a></dt>
     <dd>A price level embedded in turbos and knock-out certificates. If the underlying touches or crosses this level <strong>at any point during trading hours</strong> — intraday, even momentarily — the product terminates immediately. Barriers are set above the strike (for long turbos) to give the bank a safety buffer before the financing is impaired.</dd>
 
-    <dt>Knock-out</dt>
+    <dt data-tip="The instant, permanent termination of a turbo when the underlying touches the barrier. No recovery is possible."><a href="https://en.wikipedia.org/wiki/Barrier_option" target="_blank" rel="noopener">Knock-out</a></dt>
     <dd>The event triggered when the underlying touches the barrier. The product terminates <strong>permanently and instantly</strong> — no grace period, no recovery clause. The holder receives a residual equal to (barrier − strike) × quantity. If barrier equals strike, the residual is zero.</dd>
 
-    <dt>Leverage ratio</dt>
+    <dt data-tip="How many times a product amplifies the underlying moves. 5x leverage = a 5% change for every 1% move."><a href="https://en.wikipedia.org/wiki/Leverage_(finance)" target="_blank" rel="noopener">Leverage ratio</a></dt>
     <dd>How much a turbo amplifies the underlying's moves. Calculated as <strong>underlying price ÷ turbo price</strong>. A turbo priced at €40 on a €200 share has 5× leverage — a 1% move in the underlying produces approximately a 5% move in the turbo. Leverage increases as the underlying approaches the barrier (and the turbo price approaches zero).</dd>
 
-    <dt>Participation rate</dt>
+    <dt data-tip="The share of the underlying upside you receive in a capital protected note — e.g. 60% means you keep 60 cents per euro of gain."><a href="https://en.wikipedia.org/wiki/Capital_protection" target="_blank" rel="noopener">Participation rate</a></dt>
     <dd>In a capital protected note, the fraction of the underlying's upside you capture above the strike. A 60% rate means you keep €0.60 for every €1 of gain. Set at issuance — higher rates require higher interest rates, which reduce the cost of the zero-coupon bond and leave more budget for the option.</dd>
 
-    <dt>Cap</dt>
+    <dt data-tip="The maximum return a discount certificate will pay, no matter how high the underlying rises above it."><a href="https://en.wikipedia.org/wiki/Covered_call" target="_blank" rel="noopener">Cap</a></dt>
     <dd>The maximum return a discount certificate can pay. If the underlying closes above the cap at maturity, you receive the cap value — not the actual price. Funded by selling a call option at that level; the premium collected is passed on to you as the purchase discount.</dd>
 
-    <dt>Issuer credit risk</dt>
+    <dt data-tip="The risk of losing money if the issuing bank fails, regardless of how the underlying is performing."><a href="https://en.wikipedia.org/wiki/Credit_risk" target="_blank" rel="noopener">Issuer credit risk</a></dt>
     <dd>The risk that the issuing bank defaults. Structured products are <strong>unsecured bank debt</strong> — not equity in the underlying. If the bank enters insolvency, your claim joins the creditor queue regardless of where the underlying is trading. This risk does not exist when you hold shares directly.</dd>
 
-    <dt>Zero-coupon bond</dt>
+    <dt data-tip="A bond with no interest payments — bought cheaply and redeemed at full face value at maturity."><a href="https://en.wikipedia.org/wiki/Zero-coupon_bond" target="_blank" rel="noopener">Zero-coupon bond</a></dt>
     <dd>A bond that pays no periodic interest. Issued at a discount to face value, it matures at par. Used inside capital protected notes: the bank buys a zero-coupon bond sized so it will equal the capital guarantee at maturity, then spends the remaining cash on a call option. At low rates, the bond costs more — leaving less for the option and producing lower participation rates.</dd>
 
-    <dt>Delta</dt>
+    <dt data-tip="How much the product price changes for every 1 unit move in the underlying. 1.0 = tracks it exactly."><a href="https://en.wikipedia.org/wiki/Greeks_(finance)" target="_blank" rel="noopener">Delta</a></dt>
     <dd>How much a product's price changes for a €1 move in the underlying. A participation certificate has delta ≈ 1 (tracks 1:1). A turbo's delta is close to 1 but rises toward infinity as the underlying approaches the barrier. Mathematically, delta is the first derivative of the payoff function with respect to the underlying price.</dd>
 
-    <dt>Maturity</dt>
+    <dt data-tip="The expiry date when the product pays out its final value based on where the underlying ended up."><a href="https://en.wikipedia.org/wiki/Maturity_(finance)" target="_blank" rel="noopener">Maturity</a></dt>
     <dd>The expiry date on which the product cash-settles. The payoff formula is applied to the final underlying price and proceeds are paid. Open-ended turbos have no fixed maturity — they expire on knock-out or can be closed voluntarily. Most discount and capital protected certificates have fixed maturities of 6–36 months.</dd>
   </dl>
 </section>

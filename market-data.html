@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<!-- saved from url=(0237)file:///Users/hatim/Library/Application%20Support/Claude/local-agent-mode-sessions/a8dc546e-c4a6-471d-b419-c4bca0372c2f/8960fd7e-4404-4a28-82b8-f6bec4781603/local_fdcb63a2-869d-49cc-85c1-9cd7e8998fb4/outputs/financial-products-guide.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Financial Market Data — Engineer's Field Guide</title>
+<style>
+  :root {
+    --bg:     #ffffff;
+    --bg2:    #f6f5f1;
+    --bg3:    #eeecea;
+    --border: #e3e0da;
+    --text:   #181816;
+    --muted:  #9a9892;
+    --rule:   rgba(0,0,0,0.09);
+    --eq:     #1660a0;
+    --fi:     #0d6650;
+    --fx:     #b07015;
+    --der:    #6b3fa0;
+    --fund:   #8a3060;
+    --quote:  #1a5c3a;
+    --data:   #2a4a7a;
+    --pos:    #1a7a50;
+    --neg:    #a02828;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: -apple-system,'Helvetica Neue',Arial,sans-serif; font-size: 16px; line-height: 1.65; -webkit-font-smoothing: antialiased; }
+
+  /* ── Hero ── */
+  .hero { max-width: 680px; margin: 0 auto; padding: 4rem 1.5rem 2.5rem; border-bottom: 1px solid var(--rule); }
+  .eyebrow { font-size: .72rem; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin-bottom: 1rem; }
+  .hero h1 { font-size: 2rem; font-weight: 700; letter-spacing: -.02em; line-height: 1.2; }
+  .hero p { margin-top: .9rem; font-size: .96rem; color: #4a4845; max-width: 540px; }
+
+  /* ── Tabs ── */
+  .tabs { position: sticky; top: 0; z-index: 20; background: var(--bg); border-bottom: 1px solid var(--rule); display: flex; overflow-x: auto; scrollbar-width: none; }
+  .tabs::-webkit-scrollbar { display: none; }
+  .tabs-inner { display: flex; max-width: 680px; margin: 0 auto; width: 100%; padding: 0 1.5rem; }
+  .tab { padding: .8rem .9rem; border: none; border-bottom: 2px solid transparent; background: transparent; cursor: pointer; font-size: .78rem; font-weight: 600; letter-spacing: .03em; color: var(--muted); white-space: nowrap; transition: color .15s, border-color .15s; margin-bottom: -1px; }
+  .tab:hover { color: var(--text); }
+  .tab.active { color: var(--text); }
+  .tab[data-t="dm"].active   { border-bottom-color: var(--data); }
+  .tab[data-t="eq"].active   { border-bottom-color: var(--eq); }
+  .tab[data-t="fi"].active   { border-bottom-color: var(--fi); }
+  .tab[data-t="fx"].active   { border-bottom-color: var(--fx); }
+  .tab[data-t="der"].active  { border-bottom-color: var(--der); }
+  .tab[data-t="fund"].active { border-bottom-color: var(--fund); }
+  .tab[data-t="qt"].active   { border-bottom-color: var(--quote); }
+
+  /* ── Panels ── */
+  .panel { display: none; max-width: 680px; margin: 0 auto; padding: 3rem 1.5rem 5rem; }
+  .panel.active { display: block; }
+
+  /* ── Section header ── */
+  .sec-head { margin-bottom: 2.5rem; padding-bottom: 2rem; border-bottom: 1px solid var(--rule); }
+  .sec-num { font-size: .72rem; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin-bottom: .7rem; }
+  .sec-head h2 { font-size: 1.6rem; font-weight: 700; letter-spacing: -.02em; margin-bottom: .6rem; }
+  .sec-head > p { font-size: .95rem; color: #4a4845; }
+  .tags { display: flex; flex-wrap: wrap; gap: .35rem; margin-top: .9rem; }
+  .tag { padding: .18em .65em; border: 1px solid var(--border); font-size: .74rem; font-weight: 600; letter-spacing: .03em; color: var(--muted); }
+
+  /* ── Two-col grid ── */
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-bottom: 2rem; }
+  @media(max-width:580px){ .grid2 { grid-template-columns: 1fr; } }
+
+  /* ── Callout / info boxes ── */
+  .box { background: var(--bg2); padding: 1.1rem 1.25rem; font-size: .875rem; line-height: 1.72; color: #3a3835; }
+  .box.bl  { border-left: 3px solid var(--data); }
+  .box.eq  { border-left: 3px solid var(--eq); }
+  .box.fi  { border-left: 3px solid var(--fi); }
+  .box.fx  { border-left: 3px solid var(--fx); }
+  .box.der { border-left: 3px solid var(--der); }
+  .box.fund{ border-left: 3px solid var(--fund); }
+  .box.qt  { border-left: 3px solid var(--quote); }
+  .box h3 { font-size: .76rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: .55rem; }
+  .box code { background: rgba(0,0,0,.07); padding: .1em .38em; font-family: 'SF Mono','Fira Code',monospace; font-size: .8em; color: var(--text); }
+  .box strong { color: var(--text); }
+
+  /* ── JSON example block ── */
+  pre.json { background: var(--bg2); border-left: 3px solid var(--border); padding: 1rem 1.25rem; font-family: 'SF Mono','Fira Code',monospace; font-size: .78rem; line-height: 1.6; overflow-x: auto; margin-bottom: 1.5rem; color: #2a2825; }
+  pre.json .k { color: #1660a0; }
+  pre.json .s { color: #0d6650; }
+  pre.json .n { color: #b07015; }
+
+  /* ── Sub-section label ── */
+  .sub-label { font-size: .72rem; text-transform: uppercase; letter-spacing: .12em; color: var(--muted); margin: 2.5rem 0 1rem; }
+
+  /* ── Chart containers ── */
+  .chart-wrap { background: var(--bg2); border: 1px solid var(--border); padding: 1.25rem; margin-bottom: 1.5rem; }
+  .chart-wrap h3 { font-size: .76rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: 1rem; }
+  canvas { display: block; width: 100%; }
+  .chart-controls { display: flex; gap: .75rem; align-items: center; margin-top: 1rem; flex-wrap: wrap; }
+  .btn { padding: .3rem .85rem; border: 1px solid var(--border); background: var(--bg); color: var(--text); cursor: pointer; font-size: .78rem; font-weight: 600; letter-spacing: .03em; transition: background .12s; }
+  .btn:hover { background: var(--bg3); }
+  .btn.primary { background: var(--text); border-color: var(--text); color: var(--bg); }
+  .btn.primary:hover { background: #333; }
+  .btn.active-mode { background: var(--text); color: var(--bg); }
+  label.ctrl { font-size: .8rem; color: var(--muted); display: flex; align-items: center; gap: .5rem; }
+  input[type=range] { accent-color: var(--text); }
+
+  /* ── Legend ── */
+  .legend { display: flex; gap: 1rem; flex-wrap: wrap; margin-top: .6rem; }
+  .legend-item { display: flex; align-items: center; gap: .4rem; font-size: .78rem; color: var(--muted); }
+  .legend-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+
+  /* ── Chips ── */
+  .chips { display: flex; gap: .6rem; flex-wrap: wrap; margin-top: .9rem; }
+  .chip { background: var(--bg); border: 1px solid var(--border); padding: .4rem .8rem; font-size: .8rem; }
+  .chip .clabel { color: var(--muted); font-size: .7rem; text-transform: uppercase; letter-spacing: .05em; }
+  .chip .val { font-weight: 700; color: var(--text); }
+  .chip .val.up   { color: var(--pos); }
+  .chip .val.down { color: var(--neg); }
+
+  /* ── Timeline ── */
+  .timeline { position: relative; padding-left: 1.4rem; }
+  .timeline::before { content:''; position:absolute; left:4px; top:6px; bottom:0; width:1px; background:var(--border); }
+  .tl-item { position:relative; margin-bottom:1.25rem; }
+  .tl-item::before { content:''; position:absolute; left:-1.4rem; top:.5rem; width:8px; height:8px; border-radius:50%; background:var(--text); border:2px solid var(--bg); outline:1px solid var(--border); }
+  .tl-time { font-size:.72rem; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); margin-bottom:.2rem; }
+  .tl-text { font-size:.88rem; color:#3a3835; }
+
+  /* ── Kbd ── */
+  kbd { background:var(--bg2); border:1px solid var(--border); padding:.1em .4em; font-family:'SF Mono','Fira Code',monospace; font-size:.8em; }
+
+  /* ── Entity diagram ── */
+  .entity-diagram { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: .75rem; margin-bottom: 1.5rem; }
+  .entity { background: var(--bg2); border: 1px solid var(--border); padding: .9rem 1rem; }
+  .entity .e-label { font-size: .68rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin-bottom: .4rem; }
+  .entity .e-name { font-size: 1rem; font-weight: 700; margin-bottom: .4rem; }
+  .entity .e-desc { font-size: .78rem; color: #4a4845; }
+  .entity-arrow { text-align: center; color: var(--muted); font-size: .8rem; margin: .3rem 0; }
+
+  ::-webkit-scrollbar { width:5px; height:5px; }
+  ::-webkit-scrollbar-track { background:var(--bg); }
+  ::-webkit-scrollbar-thumb { background:var(--border); }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="eyebrow">A field guide for software engineers</div>
+  <h1>Financial market data — what it is and how it behaves</h1>
+  <p>Seven topics covering the asset classes and data patterns you'll encounter when building on a market data feed. Each section pairs the financial concept with the engineering reality.</p>
+</div>
+
+<div class="tabs" id="tabs">
+  <div class="tabs-inner">
+    <button class="tab active" data-t="dm">Data Model</button>
+    <button class="tab" data-t="eq">Equities</button>
+    <button class="tab" data-t="fi">Bonds</button>
+    <button class="tab" data-t="fx">FX</button>
+    <button class="tab" data-t="der">Derivatives</button>
+    <button class="tab" data-t="fund">Funds &amp; ETFs</button>
+    <button class="tab" data-t="qt">Quote &amp; Time Series</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     TAB 1 — MARKET DATA ARCHITECTURE
+═══════════════════════════════════════════ -->
+<div class="panel active" id="panel-dm">
+  <div class="sec-head">
+    <div class="sec-num">01 — Foundation</div>
+    <h2>How market data works</h2>
+    <p>Before looking at any asset class, understand the three dimensions that cut across all of them: <em>what kind of data</em> you're getting, <em>how fresh</em> it is, and <em>how securities are identified</em>. These concepts apply regardless of which API or vendor you use.</p>
+    <div class="tags">
+      <span class="tag">Exchange vs OTC</span>
+      <span class="tag">Real-time / Delayed / EOD</span>
+      <span class="tag">ISIN / SEDOL / MIC</span>
+      <span class="tag">Reference vs Quote Data</span>
+    </div>
+  </div>
+
+  <div class="sub-label">The two types of market data</div>
+  <div class="grid2">
+    <div class="box bl">
+      <h3>Reference Data (static)</h3>
+      Describes <em>what</em> a security is. Changes infrequently — maybe once a year at a corporate action, otherwise stable.<br><br>
+      <strong>Examples:</strong> company name, ISIN, exchange listing, coupon rate, maturity date, fund manager, index constituents.<br><br>
+      <strong>Engineering pattern:</strong> cache aggressively. Invalidate on corporate action events. Treat like a config file, not a stream.
+    </div>
+    <div class="box bl">
+      <h3>Quote Data (dynamic)</h3>
+      Describes <em>what price</em> a security is trading at right now. Can change thousands of times per second.<br><br>
+      <strong>Examples:</strong> bid, ask, last price, volume, OHLCV bars, yield, NAV.<br><br>
+      <strong>Engineering pattern:</strong> streaming or short-TTL cache. Three freshness levels: <strong>real-time</strong> (milliseconds), <strong>delayed</strong> (15–20 min), <strong>EOD</strong> (once daily at close).
+    </div>
+  </div>
+
+  <div class="sub-label">Exchange-traded vs OTC</div>
+  <div class="grid2">
+    <div class="box bl">
+      <h3>Exchange-traded</h3>
+      All orders flow through a central venue (NYSE, LSE, Xetra…). Every trade is public — price, volume, time. The exchange is both the matching engine and the price reporter.<br><br>
+      <strong>Data feed:</strong> a firehose of order book events and trade prints. You need to filter by symbol. Latency matters — co-location is a thing.<br><br>
+      Examples: equities, listed options, exchange-traded futures, ETFs.
+    </div>
+    <div class="box bl">
+      <h3>Over the Counter (OTC)</h3>
+      Two parties negotiate directly — no central exchange. Price is agreed bilaterally, which means there is <em>no single official price</em>.<br><br>
+      <strong>Data feed:</strong> aggregated quotes from multiple market makers or inter-dealer brokers. The "price" is a consensus or best available. Transparency is lower.<br><br>
+      Examples: bonds, FX spot, interest rate swaps, most structured products.
+    </div>
+  </div>
+
+  <div class="sub-label">Security identifiers — the Tower of Babel</div>
+  <div class="box bl" style="margin-bottom:1rem">
+    <h3>Why the same security has many IDs</h3>
+    There is no single global standard everyone uses. Different jurisdictions and vendors invented their own systems:<br><br>
+    <code>ISIN</code> — ISO 6166, 12-character global standard. One per security. Use this for cross-border lookups.<br>
+    <code>SEDOL</code> — 7 characters, UK/Ireland. Common in European systems.<br>
+    <code>CUSIP</code> — 9 characters, North America.<br>
+    <code>VALOR</code> — Switzerland.<br>
+    <code>WKN</code> — Germany (6 characters).<br>
+    <code>MIC</code> — ISO 10383, identifies the <em>exchange</em> not the security (e.g. <code>XETR</code> = Xetra, <code>XLON</code> = LSE).<br>
+    <code>RIC</code> / <code>ticker</code> — vendor-specific, not globally unique.<br><br>
+    <strong>The ISIN trap:</strong> AAPL (US0378331005) is listed on NASDAQ, Frankfurt, and dozens of other exchanges — one ISIN, many listings, many prices. Always pair an ISIN with a <code>MIC</code> or exchange code to get a unique price.
+  </div>
+
+  <div class="sub-label">One security, many prices</div>
+  <div class="box bl">
+    <h3>The multi-listing problem</h3>
+    The same instrument (ISIN) can trade on 30+ exchanges simultaneously. Each listing has its own price, currency, trading hours, and liquidity.<br><br>
+    When you query a market data API by ISIN without specifying a venue, you'll typically get multiple rows back — one per eligible listing. You need a strategy to pick one:<br><br>
+    <strong>Primary venue</strong> — the "home" exchange defined in reference data (usually the exchange where the security was first listed).<br>
+    <strong>Highest liquidity</strong> — pick the venue with the most trading volume over the past week or month.<br>
+    <strong>Specific venue</strong> — pass a MIC code to get exactly one listing.<br><br>
+    This is not specific to any vendor — it's a fundamental property of how global securities markets work.
+  </div>
+
+  <div class="sub-label">Corporate actions — when reference data mutates</div>
+  <div class="box bl">
+    <h3>Events that change the meaning of historical prices</h3>
+    Corporate actions are events issued by a company that change its securities. They're the most common source of silent data bugs in financial systems.<br><br>
+    <strong>Dividend:</strong> company pays cash per share. On the ex-date, the share price drops by the dividend amount. Historical prices before the ex-date need a downward adjustment to make charts continuous.<br>
+    <strong>Stock split (e.g. 2-for-1):</strong> share count doubles, price halves. Every historical price before the split needs halving — otherwise your year-over-year return calculation will show a fake -50%.<br>
+    <strong>Rights issue / spin-off:</strong> new shares issued, value redistributed. Complex adjustments needed.<br><br>
+    Market data APIs typically offer two series: <strong>adjusted</strong> (suitable for charts and return calculations) and <strong>unadjusted</strong> (raw prices as they actually traded). Always know which one you're using.
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     TAB 2 — EQUITIES
+═══════════════════════════════════════════ -->
+<div class="panel" id="panel-eq">
+  <div class="sec-head">
+    <div class="sec-num">02 — Equities</div>
+    <h2>Stocks &amp; Company Data</h2>
+    <p>Ownership shares in a company. The most common instrument type in any market data feed. Price is set by continuous auction on an exchange. Equity data also includes fundamentals, key figures, and corporate actions.</p>
+    <div class="tags">
+      <span class="tag">Exchange-Traded</span><span class="tag">OHLCV</span>
+      <span class="tag">Corporate Actions</span><span class="tag">Fundamentals</span><span class="tag">T+2 Settlement</span>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="box eq">
+      <h3>Key Data Fields</h3>
+      <strong>Quote:</strong> <code>bid</code> <code>ask</code> <code>last_price</code> <code>volume</code> <code>vwap</code><br>
+      <strong>OHLCV:</strong> <code>open</code> <code>high</code> <code>low</code> <code>close</code> <code>volume</code><br>
+      <strong>Reference:</strong> <code>isin</code> <code>name</code> <code>mic</code> <code>currency</code><br>
+      <strong>Fundamentals:</strong> <code>market_cap</code> <code>shares_outstanding</code> <code>pe_ratio</code> <code>eps</code><br>
+      <strong>Dividends:</strong> <code>dividend</code> <code>dividend_yield</code> <code>ex_date</code> <code>payment_date</code><br>
+      <strong>Performance:</strong> <code>performance_1d</code> <code>performance_1y</code> <code>beta</code>
+    </div>
+    <div class="box eq">
+      <h3>Engineer Analogy</h3>
+      A stock is a <strong>shared mutable resource with a live price tag</strong>. The exchange is a pub/sub broker — market makers post bids/asks, trades are events emitted to all subscribers.<br><br>
+      Corporate actions are like <strong>schema migrations</strong> — they change the meaning of all historical prices retroactively. A 2-for-1 split means every historical close needs halving. Adjusted vs unadjusted data = migrated vs original schema.<br><br>
+      <strong>Settlement at T+2</strong> means the trade is agreed today but cash and shares actually move two business days later. This matters for dividend entitlement — you must own the stock before ex-date <em>at settlement</em>.
+    </div>
+  </div>
+
+  <div class="chart-wrap">
+    <h3>Intraday price simulation — 1 trading day (09:30–16:00 ET)</h3>
+    <canvas id="eq-chart" height="150" width="0"></canvas>
+    <div class="chart-controls">
+      <button class="btn primary" id="eq-play">▶ Play</button>
+      <label class="ctrl">Speed <input type="range" id="eq-speed" min="1" max="10" value="5" style="width:70px"></label>
+      <div class="legend">
+        <span class="legend-item"><span class="legend-dot" style="background:#1660a0"></span>last_price</span>
+        <span class="legend-item"><span class="legend-dot" style="background:#b07015"></span>vwap</span>
+        <span class="legend-item"><span class="legend-dot" style="background:#0d6650;border-radius:2px"></span>volume</span>
+      </div>
+    </div>
+    <div class="chips" id="eq-chips">
+      <div class="chip"><div class="clabel">Last Price</div><div class="val" id="eq-last">$174.76</div></div>
+      <div class="chip"><div class="clabel">Change</div><div class="val up" id="eq-chg">+22.12%</div></div>
+      <div class="chip"><div class="clabel">Volume</div><div class="val" id="eq-vol">59.0M</div></div>
+      <div class="chip"><div class="clabel">VWAP</div><div class="val" id="eq-vwap">$167.76</div></div>
+    </div>
+  </div>
+
+  <div class="sub-label">Trading day timeline</div>
+  <div class="timeline">
+    <div class="tl-item"><div class="tl-time">04:00 ET — Pre-market</div><div class="tl-text">Quotes available but thin liquidity and wide spreads. No official open price yet. Pre-market prices are typically flagged separately in feeds.</div></div>
+    <div class="tl-item"><div class="tl-time">09:30 ET — Opening auction</div><div class="tl-text">First official <code>open</code> price. High volatility spike and volume surge. The opening price is set by a call auction — all pending orders match simultaneously, not sequentially.</div></div>
+    <div class="tl-item"><div class="tl-time">09:30–15:55 — Continuous trading</div><div class="tl-text">Bid/ask stream. Level 2 order book depth. Tick-by-tick trades available at this granularity. Aggregated into 1-min, 5-min, 15-min bars on request.</div></div>
+    <div class="tl-item"><div class="tl-time">16:00 ET — Close</div><div class="tl-text">Official <code>close</code> price set by closing auction. EOD snapshot published. This is what gets stored as the daily bar in historical price series.</div></div>
+    <div class="tl-item"><div class="tl-time">T+2 — Settlement</div><div class="tl-text">Cash and shares actually exchange two business days after the trade. Corporate action ex-dates are based on settlement date, not trade date — a common source of bugs.</div></div>
+  </div>
+
+  <div class="sub-label">Corporate actions</div>
+  <div class="box eq" style="margin-top:.5rem">
+    <h3>The tricky part — retroactive adjustment</h3>
+    Corporate actions change price or share count without a market trade. Every historical price API should offer both adjusted and unadjusted series.<br><br>
+    <strong>Dividend:</strong> price drops by dividend amount on ex-date. Additive adjustment subtracts the dividend from all pre-ex-date prices so charts show continuous performance.<br>
+    <strong>Stock split (2-for-1):</strong> price halved, shares doubled. Multiplicative adjustment halves all pre-split historical prices — otherwise a chart shows a fake -50% drop.<br>
+    <strong>Always know which series you're using</strong> — mixing adjusted and unadjusted data in the same calculation produces wrong results silently.
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     TAB 3 — BONDS
+═══════════════════════════════════════════ -->
+<div class="panel" id="panel-fi">
+  <div class="sec-head">
+    <div class="sec-num">03 — Fixed Income</div>
+    <h2>Bonds &amp; Notes</h2>
+    <p>Debt instruments. The issuer borrows money, pays periodic <strong>coupons</strong>, then repays <strong>face value</strong> at maturity. Price moves inversely with interest rates. Bond data is complex because it trades OTC and comes from multiple data providers with partially overlapping coverage.</p>
+    <div class="tags">
+      <span class="tag">OTC / Exchange</span><span class="tag">Yield-based Pricing</span>
+      <span class="tag">Accrued Interest</span><span class="tag">Multi-vendor Pricing</span><span class="tag">T+2 Settlement</span>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="box fi">
+      <h3>Key Data Fields</h3>
+      <strong>Reference:</strong> <code>isin</code> <code>issuer_name</code> <code>currency</code> <code>face_value</code><br>
+      <strong>Structure:</strong> <code>coupon_rate</code> <code>coupon_frequency</code> <code>maturity_date</code> <code>issue_date</code><br>
+      <strong>Quote:</strong> <code>clean_price</code> <code>dirty_price</code> <code>bid</code> <code>ask</code><br>
+      <strong>Analytics:</strong> <code>yield_to_maturity</code> <code>duration</code> <code>modified_duration</code><br>
+      <strong>Accrual:</strong> <code>accrued_interest</code> <code>day_count_convention</code><br>
+      <strong>Credit:</strong> <code>credit_rating</code> <code>rating_agency</code> <code>seniority</code>
+    </div>
+    <div class="box fi">
+      <h3>Engineer Analogy</h3>
+      A bond is a <strong>loan object with a payment schedule</strong>.<br><br>
+      <code>dirty_price = clean_price + accrued_interest</code><br><br>
+      You quote <em>clean</em> but settle <em>dirty</em>. Market screens show clean price — the actual cash you hand over includes the accrued interest.<br><br>
+      <strong>Duration</strong> is like a sensitivity coefficient — the ∂price/∂rate. A duration of 8 means a 1% rate rise drops the price ~8%. It's what "bonds go down when rates go up" actually means numerically.<br><br>
+      <strong>Multi-provider reality:</strong> bond reference data comes from multiple vendors (e.g. WM, Bloomberg, EDI) with partially overlapping coverage. Your feed picks a source; different APIs may return different values for the same ISIN.
+    </div>
+  </div>
+
+  <div class="chart-wrap">
+    <h3>Yield curve — interest rate vs maturity (animate to see curve regime changes)</h3>
+    <canvas id="fi-chart" height="170" width="0"></canvas>
+    <div class="chart-controls">
+      <button class="btn primary" id="fi-play">▶ Animate shapes</button>
+      <div class="legend">
+        <span class="legend-item"><span class="legend-dot" style="background:#0d6650"></span>Normal (upward sloping)</span>
+        <span class="legend-item"><span class="legend-dot" style="background:#a02828"></span>Inverted (recession signal)</span>
+        <span class="legend-item"><span class="legend-dot" style="background:#b07015"></span>Flat</span>
+      </div>
+    </div>
+    <div class="chips">
+      <div class="chip"><div class="clabel">2Y Yield</div><div class="val" id="fi-2y">4.85%</div></div>
+      <div class="chip"><div class="clabel">10Y Yield</div><div class="val" id="fi-10y">4.20%</div></div>
+      <div class="chip"><div class="clabel">2s10s Spread</div><div class="val up" id="fi-spread">+65 bps</div></div>
+      <div class="chip"><div class="clabel">Curve shape</div><div class="val" id="fi-shape">Inverted</div></div>
+    </div>
+  </div>
+
+  <div class="chart-wrap">
+    <h3>Bond price vs yield — drag to see the inverse relationship</h3>
+    <canvas id="fi-pvr" height="130" width="0"></canvas>
+    <div class="chart-controls">
+      <label class="ctrl">Yield: <input type="range" id="fi-yield-slider" min="1" max="12" value="5" step="0.1" style="width:110px"> <span id="fi-yield-val">5.0%</span></label>
+    </div>
+    <div class="chips">
+      <div class="chip"><div class="clabel">Clean Price</div><div class="val" id="fi-price">$100.00</div></div>
+      <div class="chip"><div class="clabel">Duration</div><div class="val" id="fi-dur">8.5</div></div>
+    </div>
+  </div>
+
+  <div class="sub-label">Bond lifecycle in the data feed</div>
+  <div class="timeline">
+    <div class="tl-item"><div class="tl-time">Issue date</div><div class="tl-text">Bond issued at par (100) or at discount/premium. ISIN assigned. Coupon rate and maturity date are fixed in reference data and never change during the bond's life.</div></div>
+    <div class="tl-item"><div class="tl-time">Coupon dates</div><div class="tl-text">Periodic coupon payments (annual/semi-annual). Accrued interest resets to 0 after each payment. The dirty price drops by the coupon amount on payment date — looks like a price fall but isn't.</div></div>
+    <div class="tl-item"><div class="tl-time">Daily</div><div class="tl-text">Clean price floats with market rates and credit conditions. Accrued interest ticks up every day (linearly between coupon dates). Yield to maturity recalculated from current price.</div></div>
+    <div class="tl-item"><div class="tl-time">Maturity date</div><div class="tl-text">Face value repaid. Bond expires and moves to historical data. Your systems need to handle expired bonds — subscriptions, cache entries, and index compositions must be cleaned up.</div></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     TAB 4 — FX
+═══════════════════════════════════════════ -->
+<div class="panel" id="panel-fx">
+  <div class="sec-head">
+    <div class="sec-num">04 — Foreign Exchange</div>
+    <h2>Foreign Exchange — Cross Rates</h2>
+    <p>The world's largest market (~$7.5T/day). Currency pairs trade 24/5. No central exchange — rates aggregated from interbank OTC network. The API delivers spot rates, cross rates, and fixing snapshots.</p>
+    <div class="tags">
+      <span class="tag">24/5 OTC</span><span class="tag">Spot / Forward</span>
+      <span class="tag">Pip-based</span><span class="tag">ISO 4217</span><span class="tag">ECB / WMR Fixings</span>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="box fx">
+      <h3>Key Data Fields</h3>
+      <strong>Quote:</strong> <code>bid</code> <code>ask</code> <code>mid</code> <code>last</code><br>
+      <strong>Daily:</strong> <code>open</code> <code>high</code> <code>low</code> <code>close</code><br>
+      <strong>Reference:</strong> <code>base_currency</code> <code>quote_currency</code> <code>pair</code><br>
+      <strong>Derived:</strong> <code>spread_pips</code> <code>pip_value</code><br><br>
+      <strong>Cross rates</strong> — EUR/JPY is derived from EUR/USD × USD/JPY. Feeds may publish these as synthetic rates computed server-side.<br><br>
+      <strong>Fixing rates:</strong> ECB fix at 16:00 CET, WMR at 16:00 London — point-in-time snapshots used as benchmarks for fund NAV and structured product settlement.
+    </div>
+    <div class="box fx">
+      <h3>Engineer Analogy</h3>
+      FX is a <strong>global key-value store</strong> where keys are currency pairs and values update millions of times per day.<br><br>
+      <code>EUR/USD = 1.0850</code> means 1 EUR buys 1.0850 USD. Base currency is always the denominator of price.<br><br>
+      The <strong>spread</strong> (bid/ask gap) is the market-maker's fee baked into the price — no separate commission.<br><br>
+      <strong>Fixing rates</strong> (ECB 16:00 CET, WMR 16:00 London) are point-in-time snapshots used for fund NAV calculation and benchmark valuation.
+    </div>
+  </div>
+
+  <div class="chart-wrap">
+    <h3>EUR/USD — 24-hour session with regional market bands</h3>
+    <canvas id="fx-chart" height="160" width="0"></canvas>
+    <div class="chart-controls">
+      <button class="btn primary" id="fx-play">▶ Play 24h</button>
+      <div class="legend">
+        <span class="legend-item"><span class="legend-dot" style="background:#b07015"></span>EUR/USD bid</span>
+        <span class="legend-item"><span class="legend-dot" style="background:rgba(80,40,120,0.3);border-radius:2px"></span>Tokyo</span>
+        <span class="legend-item"><span class="legend-dot" style="background:rgba(13,102,80,0.3);border-radius:2px"></span>London</span>
+        <span class="legend-item"><span class="legend-dot" style="background:rgba(22,96,160,0.3);border-radius:2px"></span>New York</span>
+      </div>
+    </div>
+    <div class="chips">
+      <div class="chip"><div class="clabel">EUR/USD</div><div class="val" id="fx-rate">1.0847</div></div>
+      <div class="chip"><div class="clabel">Session</div><div class="val" id="fx-session">Sydney</div></div>
+      <div class="chip"><div class="clabel">Daily range</div><div class="val" id="fx-range">79 pips</div></div>
+    </div>
+  </div>
+
+  <div class="box fx">
+    <h3>FX data engineering nuances</h3>
+    <strong>No single official price</strong> — each liquidity provider quotes differently. The API aggregates multiple venues into a consolidated mid/bid/ask.<br><br>
+    <strong>Timestamps are UTC.</strong> All request/response timestamps in the API are UTC. 16:00 London = 15:00 UTC (summer), 16:00 UTC (winter) — beware DST when computing fixing windows.<br><br>
+    <strong>Weekend gaps:</strong> FX closes Friday ~17:00 ET and reopens Sunday ~17:00 ET. A week's worth of news can arrive in one price gap. Your historical chart service handles this as a gap in the time series — don't try to interpolate it.
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     TAB 5 — DERIVATIVES
+═══════════════════════════════════════════ -->
+<div class="panel" id="panel-der">
+  <div class="sec-head">
+    <div class="sec-num">05 — Derivatives</div>
+    <h2>Derivatives — Options, Futures &amp; Structured Products</h2>
+    <p>Contracts whose value <em>derives</em> from an underlying asset. Multiple services handle different product types. All share the concept of an underlying, an expiry, and settlement mechanics.</p>
+    <div class="tags">
+      <span class="tag">Options</span><span class="tag">Futures</span>
+      <span class="tag">Warrants / Turbos</span><span class="tag">Certificates</span><span class="tag">Greeks</span><span class="tag">Expiry / Settlement</span>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="box der">
+      <h3>Key Data Fields</h3>
+      <strong>Options:</strong> <code>underlying_isin</code> <code>strike</code> <code>expiry_date</code> <code>option_type</code> (Call/Put)<br>
+      <strong>Greeks:</strong> <code>delta</code> <code>gamma</code> <code>theta</code> <code>vega</code> <code>rho</code><br>
+      <strong>Volatility:</strong> <code>implied_volatility</code> <code>historical_volatility</code><br>
+      <strong>Quote:</strong> <code>premium</code> <code>bid</code> <code>ask</code> <code>open_interest</code><br>
+      <strong>Futures:</strong> <code>contract_size</code> <code>tick_size</code> <code>last_trading_day</code> <code>settlement_type</code> (cash/physical)<br>
+      <strong>Leverage/Warrants:</strong> <code>barrier</code> <code>leverage_ratio</code> <code>knock_out_level</code>
+    </div>
+    <div class="box der">
+      <h3>Engineer Analogies</h3>
+      <strong>Option</strong> = a purchase order with an optional execution. You pay a <em>premium</em> for the right but not obligation.<br><br>
+      <strong>Delta</strong> ≈ probability it expires in-the-money. Think of it as a confidence score (0→1).<br>
+      <strong>Theta</strong> = time decay. Options lose value daily like a draining battery.<br><br>
+      <strong>Future</strong> = a scheduled transaction. Both sides are obligated. Margin is the collateral held in escrow.<br><br>
+      <strong>Turbo/Warrant</strong> = a leveraged bet with a kill switch (barrier). If the underlying touches the barrier <em>at any tick</em>, the product terminates immediately — even if price recovers.
+    </div>
+  </div>
+
+  <div class="chart-wrap">
+    <h3>Option payoff at expiry — drag strike and premium to explore</h3>
+    <canvas id="der-payoff" height="155" width="0"></canvas>
+    <div class="chart-controls">
+      <label class="ctrl">Strike: <input type="range" id="der-strike" min="80" max="120" value="100" style="width:90px"> <span id="der-strike-val">$100</span></label>
+      <label class="ctrl">Premium: <input type="range" id="der-prem" min="1" max="20" value="5" style="width:90px"> <span id="der-prem-val">$5</span></label>
+    </div>
+    <div class="chips">
+      <div class="chip"><div class="clabel">Call breakeven</div><div class="val" id="der-call-be">$105</div></div>
+      <div class="chip"><div class="clabel">Put breakeven</div><div class="val" id="der-put-be">$95</div></div>
+      <div class="chip"><div class="clabel">Max loss (buyer)</div><div class="val down" id="der-maxloss">-$5</div></div>
+    </div>
+  </div>
+
+  <div class="chart-wrap">
+    <h3>Theta decay — option premium eroding to zero as expiry approaches</h3>
+    <canvas id="der-theta" height="120" width="0"></canvas>
+    <div class="chart-controls">
+      <label class="ctrl">Implied vol: <input type="range" id="der-iv" min="5" max="80" value="25" style="width:100px"> <span id="der-iv-val">25%</span></label>
+    </div>
+  </div>
+
+  <div class="sub-label">Futures roll cycle — data feed impact</div>
+  <div class="timeline">
+    <div class="tl-item"><div class="tl-time">Contract listed</div><div class="tl-text">Front-month contract becomes active. Live quotes and building open interest appear in the feed. Open interest = total outstanding contracts; it's a measure of market participation.</div></div>
+    <div class="tl-item"><div class="tl-time">~21 days before expiry</div><div class="tl-text"><strong>Roll period:</strong> volume migrates from front-month to next contract. Your feed shows both simultaneously. A continuous price series requires stitching — each vendor handles this differently.</div></div>
+    <div class="tl-item"><div class="tl-time">Last trading day</div><div class="tl-text">Settlement price calculated (EDSP). Physical delivery notice (commodity futures) or cash settlement. The <code>settlement_type</code> field tells you which — it matters enormously for downstream systems.</div></div>
+    <div class="tl-item"><div class="tl-time">Expiry</div><div class="tl-text">Contract expires. The next contract becomes front-month. A "roll gap" appears in any chart that wasn't adjusted for the roll — prices may jump even though nothing economically changed.</div></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     TAB 6 — FUNDS
+═══════════════════════════════════════════ -->
+<div class="panel" id="panel-fund">
+  <div class="sec-head">
+    <div class="sec-num">06 — Funds &amp; ETFs</div>
+    <h2>Funds, ETFs, ETCs &amp; ETNs</h2>
+    <p>Pooled investment vehicles. Mutual funds priced once daily at NAV. ETFs trade intraday. ETCs and ETNs are exchange-traded debt instruments backed by commodities or strategies. The fund service includes composition data (top holdings, countries, currencies).</p>
+    <div class="tags">
+      <span class="tag">NAV-based</span><span class="tag">Acc vs Dist</span>
+      <span class="tag">ETF / ETC / ETN</span><span class="tag">UCITS</span><span class="tag">KIID / ESG</span>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="box fund">
+      <h3>Key Data Fields</h3>
+      <strong>Valuation:</strong> <code>nav</code> <code>nav_date</code> <code>currency</code><br>
+      <strong>Classification:</strong> <code>is_etf</code> <code>fund_type</code> <code>replication_method</code> (physical/synthetic)<br>
+      <strong>Costs:</strong> <code>ter</code> (total expense ratio) <code>ongoing_charge</code><br>
+      <strong>Size:</strong> <code>aum</code> (assets under management) <code>shares_outstanding</code><br>
+      <strong>Distribution:</strong> <code>distribution_type</code> (Acc/Dist) <code>dividend_date</code> <code>dividend_amount</code><br>
+      <strong>Composition:</strong> top holdings, country weights, sector weights, currency exposure
+    </div>
+    <div class="box fund">
+      <h3>Engineer Analogy</h3>
+      A <strong>mutual fund</strong> is a daily batch job — NAV calculated once at market close, published T+1.<br><br>
+      An <strong>ETF</strong> is the real-time streaming version — it has intraday bid/ask AND a once-daily NAV. The <em>premium/discount</em> (ETF price vs NAV) is like cache staleness — arbitrageurs (authorized participants) keep it near zero via a create/redeem mechanism.<br><br>
+      <strong>ETCs</strong> are debt instruments backed by physical commodities. <strong>ETNs</strong> are debt instruments backed by a strategy return — both carry issuer credit risk unlike regular ETFs.
+    </div>
+  </div>
+
+  <div class="chart-wrap">
+    <h3>ETF market price vs NAV — premium/discount over time</h3>
+    <canvas id="fund-chart" height="155" width="0"></canvas>
+    <div class="chart-controls">
+      <button class="btn primary" id="fund-play">▶ Simulate</button>
+      <div class="legend">
+        <span class="legend-item"><span class="legend-dot" style="background:#8a3060"></span>ETF market price</span>
+        <span class="legend-item"><span class="legend-dot" style="background:#9a9892"></span>NAV (daily step)</span>
+        <span class="legend-item"><span class="legend-dot" style="background:#b07015;border-radius:2px"></span>Premium/discount bars</span>
+      </div>
+    </div>
+    <div class="chips">
+      <div class="chip"><div class="clabel">NAV</div><div class="val" id="fund-nav">$48.14</div></div>
+      <div class="chip"><div class="clabel">ETF Price</div><div class="val" id="fund-price">$48.20</div></div>
+      <div class="chip"><div class="clabel">Premium</div><div class="val up" id="fund-prem">+0.12%</div></div>
+    </div>
+  </div>
+
+  <div class="sub-label">Identifier chaos — one fund, many IDs</div>
+  <div class="box fund">
+    <h3>Why fund identification is hard</h3>
+    One fund can have 50+ ISINs across share classes (currency hedged, accumulating, distributing, institutional, retail…). Common cross-jurisdictional identifiers in market data systems:<br><br>
+    <code>ISIN</code> — global standard (but one fund ≠ one ISIN — each share class gets its own)<br>
+    <code>SEDOL</code> — UK/Ireland<br>
+    <code>VALOR</code> — Switzerland<br>
+    <code>WKN</code> — Germany<br>
+    <code>Bloomberg ticker</code> / <code>Reuters RIC</code> — vendor-specific, not globally unique<br><br>
+    You need a mapping table. Vendors call this an <em>instrument master</em> or <em>reference data service</em> — it maps all identifiers to a canonical internal ID.
+  </div>
+
+  <div class="sub-label">Fund data timeline</div>
+  <div class="timeline">
+    <div class="tl-item"><div class="tl-time">Intraday (ETFs only)</div><div class="tl-text">Bid/ask stream like equities. iNAV (indicative NAV) published every 15 seconds by the exchange — derived from real-time prices of underlying holdings.</div></div>
+    <div class="tl-item"><div class="tl-time">16:00–18:00 local close</div><div class="tl-text">Fund administrator calculates official NAV. Applies FX fixing rates (typically WMR 16:00 London), corporate actions, and deducts TER. This is why fund NAVs use yesterday's FX rate.</div></div>
+    <div class="tl-item"><div class="tl-time">T+1 morning</div><div class="tl-text">NAV published to data vendors. Subscription/redemption orders (placed yesterday) execute at this NAV. Market data feed delivers the updated <code>nav</code> and <code>nav_date</code>.</div></div>
+    <div class="tl-item"><div class="tl-time">Distribution date</div><div class="tl-text">Distributing (Dist) class pays out income — NAV drops by distribution amount on ex-date. Accumulating (Acc) class reinvests — NAV grows without a drop.</div></div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     TAB 7 — QUOTE & TIME SERIES
+═══════════════════════════════════════════ -->
+<div class="panel" id="panel-qt">
+  <div class="sec-head">
+    <div class="sec-num">07 — Quote &amp; Time Series</div>
+    <h2>Quote &amp; Time Series Data</h2>
+    <p>Three types of price data serve different engineering needs. Understanding their differences — and when to use each — is one of the most important practical skills in market data engineering.</p>
+    <div class="tags">
+      <span class="tag">Real-time / Delayed / EOD</span>
+      <span class="tag">Tick-by-tick</span><span class="tag">Aggregation Periods</span>
+      <span class="tag">Adjusted History</span><span class="tag">UTC timestamps</span>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="box qt">
+      <h3>Snapshot Quotes</h3>
+      A <strong>snapshot</strong> of the current quote state. One request, one response. Three quality levels:<br><br>
+      <code>REALTIME</code> — live, requires exchange entitlement<br>
+      <code>DELAYED</code> — 15–20 min lag, cheaper entitlement<br>
+      <code>EOD</code> — end-of-day close prices only<br><br>
+      Typical fields: <code>bid</code> <code>ask</code> <code>last_price</code> <code>volume</code> <code>turnover</code> <code>open</code> <code>high</code> <code>low</code> <code>close</code><br><br>
+      <strong>Think of it as</strong> <code>GET /current-state</code> — stateless, pull-based.
+    </div>
+    <div class="box qt">
+      <h3>Tick &amp; Intraday Data</h3>
+      Every individual trade or quote update. Two modes:<br><br>
+      <strong>Raw ticks</strong> — each event as it happens (trade, bid change, ask change)<br>
+      <strong>Aggregated bars</strong> — OHLCV candlesticks computed over a time window<br><br>
+      Common aggregation periods:<br>
+      <code>1 min</code> <code>5 min</code> <code>10 min</code> <code>15 min</code> <code>30 min</code> <code>1 hour</code><br><br>
+      <strong>Think of it as</strong> event sourcing — every state change recorded. Aggregated bars are materialized views over ticks.
+    </div>
+  </div>
+
+  <!-- Tick aggregation viz -->
+  <div class="chart-wrap">
+    <h3>Tick data → aggregated bars — same data, different granularity</h3>
+    <canvas id="tick-chart" height="165" width="0"></canvas>
+    <div class="chart-controls">
+      <button class="btn active-mode" id="tick-raw" data-mode="raw">Raw ticks</button>
+      <button class="btn" id="tick-1m" data-mode="1m">1-min bars</button>
+      <button class="btn" id="tick-5m" data-mode="5m">5-min bars</button>
+      <button class="btn" id="tick-15m" data-mode="15m">15-min bars</button>
+      <button class="btn primary" id="tick-play">▶ Animate ticks</button>
+    </div>
+    <div class="chips">
+      <div class="chip"><div class="clabel">Mode</div><div class="val" id="tick-mode-label">Raw ticks</div></div>
+      <div class="chip"><div class="clabel">Data points</div><div class="val" id="tick-count">240 ticks</div></div>
+      <div class="chip"><div class="clabel">Time range</div><div class="val">09:30–10:30</div></div>
+    </div>
+  </div>
+
+  <div class="box qt" style="margin-bottom:1.5rem">
+    <h3>Historical Price Series</h3>
+    End-of-day historical prices going back months or years. The key data-engineering concern here is <strong>corporate action adjustment</strong>.<br><br>
+    <strong>Additive adjustment</strong> — subtracts past dividends from historical prices so charts appear continuous across ex-dates<br>
+    <strong>Multiplicative adjustment</strong> — scales historical prices to account for stock splits<br>
+    <strong>Adjustment source</strong> — which corporate action data provider to use (vendors differ; cross-check when accuracy matters)<br>
+    <strong>Adjustment schema</strong> — simple backward adjustment (good for charts) vs. forward-adjusted (better for portfolio valuation)
+  </div>
+
+  <!-- Adjusted vs unadjusted history viz -->
+  <div class="chart-wrap">
+    <h3>Adjusted vs unadjusted history — toggle to see the effect of a dividend and a 2-for-1 split</h3>
+    <canvas id="hist-chart" height="165" width="0"></canvas>
+    <div class="chart-controls">
+      <button class="btn active-mode" id="hist-adj">Adjusted (additive + multiplicative)</button>
+      <button class="btn" id="hist-raw">Unadjusted (raw prices)</button>
+    </div>
+    <div class="chips">
+      <div class="chip"><div class="clabel">Split date</div><div class="val">Day 60</div></div>
+      <div class="chip"><div class="clabel">Dividend ex-date</div><div class="val">Day 30</div></div>
+      <div class="chip"><div class="clabel">Mode</div><div class="val" id="hist-mode">Adjusted</div></div>
+    </div>
+  </div>
+
+  <div class="sub-label">When to use which type</div>
+  <div class="grid2">
+    <div class="box qt">
+      <h3>Use Snapshot Quotes when</h3>
+      — Building a price display widget<br>
+      — You need current bid/ask/last for a set of symbols<br>
+      — You want a stateless, cacheable response<br>
+      — You are not streaming (polling is fine)
+    </div>
+    <div class="box qt">
+      <h3>Use Tick / Intraday Data when</h3>
+      — Building intraday charts<br>
+      — You need OHLCV bars at specific intervals<br>
+      — You need raw trades for volume analysis<br>
+      — You need the exact time of each price move
+    </div>
+  </div>
+  <div class="grid2">
+    <div class="box qt">
+      <h3>Use Historical Series when</h3>
+      — Building long-term performance charts<br>
+      — Computing returns, volatility, drawdown<br>
+      — You need corporate-action adjusted series<br>
+      — Backtesting strategies
+    </div>
+    <div class="box qt">
+      <h3>UTC &amp; Timezone Gotchas</h3>
+      All API timestamps are UTC. Exchange close times vary:<br>
+      NYSE: 21:00 UTC (summer), 22:00 (winter)<br>
+      LSE: 16:30 UTC (summer), 16:30 (winter)<br>
+      Xetra: 17:30 UTC (summer), 16:30 (winter)<br><br>
+      DST transitions in March/October cause one-hour shifts. Always store UTC, convert to local only for display.
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════
+// Utilities
+// ══════════════════════════════════════════
+function rnd(a,b){return a+Math.random()*(b-a);}
+function lerp(a,b,t){return Array.isArray(a)?a.map((v,i)=>v+(b[i]-v)*t):a+(b-a)*t;}
+
+function drawGrid(ctx,W,H,mn,mx,steps=4){
+  ctx.strokeStyle='rgba(0,0,0,0.07)'; ctx.lineWidth=0.5;
+  for(let i=0;i<=steps;i++){
+    const y=H-(i/steps)*H;
+    ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();
+    const v=mn+(i/steps)*(mx-mn);
+    ctx.fillStyle='#9a9892';ctx.font='9px monospace';ctx.textAlign='left';
+    ctx.fillText(v.toFixed(2),3,y-2);
+  }
+}
+
+// Tab switching
+document.getElementById('tabs').addEventListener('click',e=>{
+  const t=e.target.closest('.tab'); if(!t) return;
+  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(x=>x.classList.remove('active'));
+  t.classList.add('active');
+  document.getElementById('panel-'+t.dataset.t).classList.add('active');
+});
+
+// ══════════════════════════════════════════
+// EQUITIES — intraday chart
+// ══════════════════════════════════════════
+(()=>{
+  const cv=document.getElementById('eq-chart'), ctx=cv.getContext('2d');
+  cv.height=150;
+  function gen(){let p=150,d=[],v=[];for(let i=0;i<78;i++){p+=rnd(-1.5,1.5)+(i<5?3:0);d.push(p);v.push(rnd(.3,1)*(i<5||i>70?2.5:1));}return{d,v};}
+  const{d:prices,v:vols}=gen();
+  let frame=0,timer=null,playing=false;
+  function vwap(n){let sv=0,sp=0;for(let i=0;i<n;i++){sv+=vols[i];sp+=prices[i]*vols[i];}return sp/sv;}
+  function draw(n){
+    const W=cv.offsetWidth; cv.width=W;
+    const pts=prices.slice(0,n); if(!pts.length)return;
+    const mn=Math.min(...pts)-1,mx=Math.max(...pts)+1;
+    ctx.clearRect(0,0,W,150);
+    drawGrid(ctx,W,105,mn,mx);
+    const bW=W/78, maxV=Math.max(...vols);
+    for(let i=0;i<n;i++){const x=i*bW,bh=(vols[i]/maxV)*40;ctx.fillStyle='rgba(13,102,80,0.25)';ctx.fillRect(x,150-bh,bW-1,bh);}
+    ctx.beginPath();pts.forEach((p,i)=>{const x=(i/77)*W,y=105-((p-mn)/(mx-mn))*105;i?ctx.lineTo(x,y):ctx.moveTo(x,y);});
+    ctx.strokeStyle='#1660a0';ctx.lineWidth=2;ctx.stroke();
+    if(n>1){ctx.beginPath();for(let i=1;i<n;i++){const x=(i/77)*W,vw=vwap(i),y=105-((vw-mn)/(mx-mn))*105;i===1?ctx.moveTo(x,y):ctx.lineTo(x,y);}
+    ctx.strokeStyle='#b07015';ctx.lineWidth=1.5;ctx.setLineDash([3,3]);ctx.stroke();ctx.setLineDash([]);}
+    const last=pts[pts.length-1],chg=last-pts[0];
+    document.getElementById('eq-last').textContent='$'+last.toFixed(2);
+    const ce=document.getElementById('eq-chg');ce.textContent=(chg>=0?'+':'')+chg.toFixed(2)+'%';ce.className='val '+(chg>=0?'up':'down');
+    document.getElementById('eq-vol').textContent=(vols.slice(0,n).reduce((a,b)=>a+b,0)).toFixed(1)+'M';
+    document.getElementById('eq-vwap').textContent='$'+vwap(n).toFixed(2);
+  }
+  draw(78);
+  document.getElementById('eq-play').addEventListener('click',function(){
+    if(playing){clearInterval(timer);playing=false;this.textContent='▶ Play';return;}
+    frame=1;playing=true;this.textContent='⏸ Pause';
+    timer=setInterval(()=>{draw(frame++);if(frame>78){clearInterval(timer);playing=false;document.getElementById('eq-play').textContent='▶ Play';}},Math.max(10,(11-+document.getElementById('eq-speed').value)*20));
+  });
+  window.addEventListener('resize',()=>draw(78));
+})();
+
+// ══════════════════════════════════════════
+// BONDS — yield curve
+// ══════════════════════════════════════════
+(()=>{
+  const cv=document.getElementById('fi-chart'),ctx=cv.getContext('2d');cv.height=170;
+  const labels=['3M','6M','1Y','2Y','3Y','5Y','7Y','10Y','20Y','30Y'];
+  const curves={normal:[4.3,4.5,4.6,4.7,4.5,4.4,4.3,4.2,4.4,4.5],inverted:[5.3,5.2,5.1,4.85,4.6,4.4,4.3,4.2,4.1,4.05],flat:[4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5,4.5]};
+  let cur='inverted',target='inverted',prog=1,animT;
+  function draw(){
+    const W=cv.offsetWidth;cv.width=W;const H=170,mn=3.8,mx=5.6;
+    const d=lerp(curves[cur],curves[target],Math.min(prog,1));
+    ctx.clearRect(0,0,W,H);drawGrid(ctx,W,H-20,mn,mx,5);
+    labels.forEach((l,i)=>{ctx.fillStyle='#9a9892';ctx.font='9px monospace';ctx.textAlign='center';ctx.fillText(l,(i/9)*(W-40)+20,H-3);});
+    function line(arr,col,lw,dash){ctx.beginPath();arr.forEach((v,i)=>{const x=(i/9)*(W-40)+20,y=(H-20)-((v-mn)/(mx-mn))*(H-28);i?ctx.lineTo(x,y):ctx.moveTo(x,y);});ctx.strokeStyle=col;ctx.lineWidth=lw||1.5;if(dash)ctx.setLineDash(dash);else ctx.setLineDash([]);ctx.stroke();ctx.setLineDash([]);}
+    line(curves.normal,'#0d6650',1.5,[4,4]);line(curves.flat,'#b07015',1,[2,6]);line(d,'#a02828',2.5);
+    const two=d[3],ten=d[7],sp=((two-ten)*100).toFixed(0);
+    document.getElementById('fi-2y').textContent=two.toFixed(2)+'%';
+    document.getElementById('fi-10y').textContent=ten.toFixed(2)+'%';
+    document.getElementById('fi-spread').textContent=(sp>0?'+':'')+sp+' bps';
+    document.getElementById('fi-spread').className='val '+(sp<0?'down':'up');
+    document.getElementById('fi-shape').textContent=two>ten?'Inverted':two<ten-.2?'Normal':'Flat';
+  }
+  draw();
+  document.getElementById('fi-play').addEventListener('click',()=>{
+    const seq=['normal','flat','inverted'];let idx=0;prog=0;target=seq[idx];clearInterval(animT);
+    animT=setInterval(()=>{prog+=0.04;if(prog>=1){prog=1;cur=target;idx++;if(idx>=seq.length){clearInterval(animT);return;}target=seq[idx];prog=0;}draw();},30);
+  });
+  // bond price vs yield
+  const pv=document.getElementById('fi-pvr'),pctx=pv.getContext('2d');pv.height=130;
+  function drawPVR(y){
+    const W=pv.offsetWidth;pv.width=W;const H=130,n=10,coup=5,face=100;
+    const ys=[],ps=[];for(let yr=1;yr<=12;yr+=.25){ys.push(yr);const r=yr/100;let p=0;for(let t=1;t<=n;t++)p+=coup/Math.pow(1+r,t);p+=face/Math.pow(1+r,n);ps.push(p);}
+    const mn=Math.min(...ps)-2,mx=Math.max(...ps)+2;
+    pctx.clearRect(0,0,W,H);drawGrid(pctx,W,H,mn,mx,4);
+    pctx.beginPath();ps.forEach((p,i)=>{const x=(i/(ps.length-1))*(W-40)+20,cy=H-((p-mn)/(mx-mn))*H;i?pctx.lineTo(x,cy):pctx.moveTo(x,cy);});
+    pctx.strokeStyle='#0d6650';pctx.lineWidth=2.5;pctx.stroke();
+    const si=Math.round((y-1)/.25);
+    if(si>=0&&si<ps.length){const px=(si/(ps.length-1))*(W-40)+20,py=H-((ps[si]-mn)/(mx-mn))*H;pctx.beginPath();pctx.arc(px,py,5,0,Math.PI*2);pctx.fillStyle='#b07015';pctx.fill();
+    document.getElementById('fi-price').textContent='$'+ps[si].toFixed(2);document.getElementById('fi-dur').textContent=(8.5-(y-5)*.3).toFixed(1);}
+  }
+  const sl=document.getElementById('fi-yield-slider');
+  sl.addEventListener('input',function(){document.getElementById('fi-yield-val').textContent=(+this.value).toFixed(1)+'%';drawPVR(+this.value);});
+  drawPVR(5);window.addEventListener('resize',()=>{draw();drawPVR(+sl.value);});
+})();
+
+// ══════════════════════════════════════════
+// FX — 24h chart
+// ══════════════════════════════════════════
+(()=>{
+  const cv=document.getElementById('fx-chart'),ctx=cv.getContext('2d');cv.height=160;
+  function gen(){let p=1.082,d=[];for(let i=0;i<96;i++){const hr=i/4,vol=hr<8?.0008:hr<13?.0018:hr<17?.0022:.001;p+=rnd(-vol,vol);d.push(p);}return d;}
+  const data=gen();let frame=0,timer=null,playing=false;
+  const sessions=[{s:0,e:32,c:'rgba(80,40,120,0.12)',l:'Tokyo'},{s:32,e:68,c:'rgba(13,102,80,0.15)',l:'London'},{s:52,e:84,c:'rgba(22,96,160,0.12)',l:'New York'}];
+  function draw(n){
+    const W=cv.offsetWidth;cv.width=W;const H=160,N=n||96;
+    const pts=data.slice(0,N);const mn=Math.min(...pts)-.001,mx=Math.max(...pts)+.001;
+    ctx.clearRect(0,0,W,H-20);drawGrid(ctx,W,H-20,mn,mx,4);
+    sessions.forEach(s=>{const x1=(s.s/95)*W,x2=(s.e/95)*W;ctx.fillStyle=s.c;ctx.fillRect(x1,0,x2-x1,H-20);ctx.fillStyle='#9a9892';ctx.font='9px sans-serif';ctx.textAlign='center';ctx.fillText(s.l,(x1+x2)/2,12);});
+    if(pts.length>1){ctx.beginPath();pts.forEach((p,i)=>{const x=(i/95)*W,y=(H-20)-((p-mn)/(mx-mn))*(H-26);i?ctx.lineTo(x,y):ctx.moveTo(x,y);});ctx.strokeStyle='#b07015';ctx.lineWidth=2;ctx.stroke();}
+    const last=pts[pts.length-1],hr=(N)/4;
+    let sess='Sydney';if(hr>=1&&hr<9)sess='Tokyo';else if(hr>=9&&hr<17)sess='London';else if(hr>=17&&hr<22)sess='New York';
+    document.getElementById('fx-rate').textContent=last.toFixed(4);
+    document.getElementById('fx-session').textContent=sess;
+    document.getElementById('fx-range').textContent=(((Math.max(...pts)-Math.min(...pts))*10000).toFixed(0))+' pips';
+  }
+  draw(96);
+  document.getElementById('fx-play').addEventListener('click',function(){if(playing){clearInterval(timer);playing=false;this.textContent='▶ Play 24h';return;}frame=1;playing=true;this.textContent='⏸ Pause';timer=setInterval(()=>{draw(frame++);if(frame>96){clearInterval(timer);playing=false;document.getElementById('fx-play').textContent='▶ Play 24h';}},40);});
+  window.addEventListener('resize',()=>draw(96));
+})();
+
+// ══════════════════════════════════════════
+// DERIVATIVES — payoff + theta
+// ══════════════════════════════════════════
+(()=>{
+  const pc=document.getElementById('der-payoff'),pctx=pc.getContext('2d');pc.height=155;
+  function drawPayoff(){
+    const W=pc.offsetWidth;pc.width=W;const H=155;
+    const strike=+document.getElementById('der-strike').value,prem=+document.getElementById('der-prem').value;
+    document.getElementById('der-strike-val').textContent='$'+strike;document.getElementById('der-prem-val').textContent='$'+prem;
+    const ps=[];for(let p=60;p<=140;p++)ps.push(p);
+    const calls=ps.map(p=>Math.max(p-strike,0)-prem),puts=ps.map(p=>Math.max(strike-p,0)-prem);
+    const mn=Math.min(...calls,...puts)-1,mx=Math.max(...calls,...puts)+1;
+    pctx.clearRect(0,0,W,H);drawGrid(pctx,W,H,mn,mx,4);
+    const zy=H-((0-mn)/(mx-mn))*H;pctx.beginPath();pctx.moveTo(0,zy);pctx.lineTo(W,zy);pctx.strokeStyle='rgba(0,0,0,0.15)';pctx.lineWidth=1;pctx.setLineDash([4,4]);pctx.stroke();pctx.setLineDash([]);
+    function line(arr,col){pctx.beginPath();arr.forEach((v,i)=>{const x=(i/80)*W,y=H-((v-mn)/(mx-mn))*H;i?pctx.lineTo(x,y):pctx.moveTo(x,y);});pctx.strokeStyle=col;pctx.lineWidth=2.5;pctx.stroke();}
+    line(calls,'#0d6650');line(puts,'#a02828');
+    pctx.fillStyle='#0d6650';pctx.font='11px sans-serif';pctx.textAlign='left';pctx.fillText('Call',4,14);
+    pctx.fillStyle='#a02828';pctx.fillText('Put',4,28);
+    document.getElementById('der-call-be').textContent='$'+(strike+prem);
+    document.getElementById('der-put-be').textContent='$'+(strike-prem);
+    document.getElementById('der-maxloss').textContent='-$'+prem;
+  }
+  document.getElementById('der-strike').addEventListener('input',drawPayoff);
+  document.getElementById('der-prem').addEventListener('input',drawPayoff);
+  drawPayoff();
+  // theta
+  const tc=document.getElementById('der-theta'),tctx=tc.getContext('2d');tc.height=120;
+  function drawTheta(){
+    const W=tc.offsetWidth;tc.width=W;const H=120;
+    const iv=+document.getElementById('der-iv').value/100;
+    document.getElementById('der-iv-val').textContent=(iv*100).toFixed(0)+'%';
+    const vals=[];for(let d=90;d>=0;d--)vals.push(100*iv*Math.sqrt(Math.max(d/252,0))+.5);
+    const mn=0,mx=Math.max(...vals)+1;
+    tctx.clearRect(0,0,W,H);drawGrid(tctx,W,H,mn,mx,3);
+    tctx.beginPath();vals.forEach((v,i)=>{const x=(i/90)*W,y=H-((v-mn)/(mx-mn))*H;i?tctx.lineTo(x,y):tctx.moveTo(x,y);});
+    tctx.strokeStyle='#6b3fa0';tctx.lineWidth=2.5;tctx.stroke();
+    tctx.fillStyle='#9a9892';tctx.font='9px monospace';tctx.textAlign='left';tctx.fillText('90d to expiry',2,H-3);
+    tctx.textAlign='right';tctx.fillText('0d (expiry)',W-2,H-3);
+  }
+  document.getElementById('der-iv').addEventListener('input',drawTheta);
+  drawTheta();
+  window.addEventListener('resize',()=>{drawPayoff();drawTheta();});
+})();
+
+// ══════════════════════════════════════════
+// FUNDS — NAV vs price
+// ══════════════════════════════════════════
+(()=>{
+  const cv=document.getElementById('fund-chart'),ctx=cv.getContext('2d');cv.height=155;
+  const N=40;
+  function gen(){let nav=48,price=48,navs=[],prices=[],spreads=[];for(let i=0;i<N;i++){if(i%5===0)nav+=rnd(-.3,.3);price+=(rnd(-.15,.15)+(nav-price)*.3);navs.push(nav);prices.push(price);spreads.push((price-nav)/nav*100);}return{navs,prices,spreads};}
+  let d=gen(),playing=false,timer=null,frame=0;
+  function draw(n){
+    const W=cv.offsetWidth;cv.width=W;const H=155,MH=H*.72;
+    const all=[...d.navs.slice(0,n||N),...d.prices.slice(0,n||N)];
+    const mn=Math.min(...all)-.1,mx=Math.max(...all)+.1;
+    ctx.clearRect(0,0,W,H);drawGrid(ctx,W,MH,mn,mx,3);
+    ctx.beginPath();d.navs.slice(0,n||N).forEach((v,i,arr)=>{const x=(i/(N-1))*W,y=MH-((v-mn)/(mx-mn))*MH;if(!i)ctx.moveTo(x,y);else if(arr[i]!==arr[i-1]){const px=((i-1)/(N-1))*W;ctx.lineTo(px,y);ctx.lineTo(x,y);}else ctx.lineTo(x,y);});
+    ctx.strokeStyle='#9a9892';ctx.lineWidth=1.5;ctx.setLineDash([3,3]);ctx.stroke();ctx.setLineDash([]);
+    ctx.beginPath();d.prices.slice(0,n||N).forEach((v,i)=>{const x=(i/(N-1))*W,y=MH-((v-mn)/(mx-mn))*MH;i?ctx.lineTo(x,y):ctx.moveTo(x,y);});
+    ctx.strokeStyle='#8a3060';ctx.lineWidth=2;ctx.stroke();
+    d.spreads.slice(0,n||N).forEach((s,i)=>{const x=(i/(N-1))*W-2,y0=H-4,bh=Math.abs(s)/(Math.max(...d.spreads.map(Math.abs))+.1)*(H*.22);ctx.fillStyle=s>=0?'rgba(176,112,21,0.4)':'rgba(160,40,40,0.4)';ctx.fillRect(x,y0-bh,5,bh);});
+    const last=d.prices[Math.min((n||N)-1,N-1)],lastnav=d.navs[Math.min((n||N)-1,N-1)],prem=(last-lastnav)/lastnav*100;
+    document.getElementById('fund-nav').textContent='$'+lastnav.toFixed(2);
+    document.getElementById('fund-price').textContent='$'+last.toFixed(2);
+    const pe=document.getElementById('fund-prem');pe.textContent=(prem>=0?'+':'')+prem.toFixed(2)+'%';pe.className='val '+(prem>=0?'up':'down');
+  }
+  draw(N);
+  document.getElementById('fund-play').addEventListener('click',function(){if(playing){clearInterval(timer);playing=false;this.textContent='▶ Simulate';return;}d=gen();frame=2;playing=true;this.textContent='⏸ Pause';timer=setInterval(()=>{draw(frame++);if(frame>N){clearInterval(timer);playing=false;document.getElementById('fund-play').textContent='▶ Simulate';}},60);});
+  window.addEventListener('resize',()=>draw(N));
+})();
+
+// ══════════════════════════════════════════
+// QUOTE SERVICES — tick aggregation
+// ══════════════════════════════════════════
+(()=>{
+  const cv=document.getElementById('tick-chart'),ctx=cv.getContext('2d');cv.height=165;
+  // Generate 60min of simulated tick data (1 tick every ~15s = 240 ticks)
+  const TICKS=240;
+  const ticks=[];let p=150;
+  for(let i=0;i<TICKS;i++){p+=rnd(-0.4,0.4)+(i<30?.15:i>180?-.1:0);ticks.push({t:i,p:+p.toFixed(2),v:Math.floor(rnd(100,2000))});}
+
+  let mode='raw',animFrame=0,animTimer=null,animPlaying=false;
+
+  function aggregate(tickArr,periodTicks){
+    const bars=[];
+    for(let i=0;i<tickArr.length;i+=periodTicks){
+      const slice=tickArr.slice(i,i+periodTicks);if(!slice.length)break;
+      bars.push({t:slice[0].t,o:slice[0].p,h:Math.max(...slice.map(x=>x.p)),l:Math.min(...slice.map(x=>x.p)),c:slice[slice.length-1].p,v:slice.reduce((s,x)=>s+x.v,0)});
+    }
+    return bars;
+  }
+
+  const periods={raw:1,'1m':4,'5m':20,'15m':60};
+
+  function drawCandles(bars,W,H){
+    const mn=Math.min(...bars.map(b=>b.l))-.2,mx=Math.max(...bars.map(b=>b.h))+.2;
+    drawGrid(ctx,W,H,mn,mx,4);
+    const bW=Math.max(2,W/bars.length-1);
+    bars.forEach((b,i)=>{
+      const x=(i/bars.length)*W+1;
+      const yo=H-((b.o-mn)/(mx-mn))*H,yc=H-((b.c-mn)/(mx-mn))*H;
+      const yh=H-((b.h-mn)/(mx-mn))*H,yl=H-((b.l-mn)/(mx-mn))*H;
+      const up=b.c>=b.o;
+      ctx.fillStyle=up?'rgba(13,102,80,0.85)':'rgba(160,40,40,0.85)';
+      ctx.strokeStyle=up?'#0d6650':'#a02828'; ctx.lineWidth=1;
+      const top=Math.min(yo,yc),h=Math.max(Math.abs(yc-yo),1);
+      ctx.fillRect(x,top,bW,h);ctx.strokeRect(x,top,bW,h);
+      ctx.beginPath();ctx.moveTo(x+bW/2,yh);ctx.lineTo(x+bW/2,top);ctx.stroke();
+      ctx.beginPath();ctx.moveTo(x+bW/2,top+h);ctx.lineTo(x+bW/2,yl);ctx.stroke();
+    });
+  }
+
+  function drawRawTicks(data,W,H,n){
+    const pts=data.slice(0,n||data.length);if(pts.length<2)return;
+    const mn=Math.min(...pts.map(x=>x.p))-.2,mx=Math.max(...pts.map(x=>x.p))+.2;
+    drawGrid(ctx,W,H,mn,mx,4);
+    ctx.beginPath();pts.forEach((t,i)=>{const x=(i/(data.length-1))*W,y=H-((t.p-mn)/(mx-mn))*H;i?ctx.lineTo(x,y):ctx.moveTo(x,y);});
+    ctx.strokeStyle='#1660a0';ctx.lineWidth=1.5;ctx.stroke();
+  }
+
+  function drawMode(n){
+    const W=cv.offsetWidth;cv.width=W;const H=165;ctx.clearRect(0,0,W,H);
+    if(mode==='raw'){
+      drawRawTicks(ticks,W,H,n||TICKS);
+      document.getElementById('tick-count').textContent=(n||TICKS)+' ticks';
+    } else {
+      const p=periods[mode];
+      const allBars=aggregate(ticks,p);
+      const bars=n?allBars.slice(0,Math.ceil(n/p)):allBars;
+      drawCandles(bars,W,H);
+      document.getElementById('tick-count').textContent=bars.length+' bars ('+mode+')';
+    }
+    document.getElementById('tick-mode-label').textContent=
+      mode==='raw'?'Raw ticks':mode+' OHLCV bars';
+  }
+
+  document.querySelectorAll('[data-mode]').forEach(btn=>{
+    btn.addEventListener('click',function(){
+      mode=this.dataset.mode;
+      document.querySelectorAll('[data-mode]').forEach(b=>b.classList.remove('active-mode'));
+      this.classList.add('active-mode');
+      animPlaying=false;clearInterval(animTimer);animFrame=0;
+      document.getElementById('tick-play').textContent='▶ Animate ticks';
+      drawMode();
+    });
+  });
+
+  document.getElementById('tick-play').addEventListener('click',function(){
+    if(animPlaying){clearInterval(animTimer);animPlaying=false;this.textContent='▶ Animate ticks';return;}
+    animPlaying=true;animFrame=1;this.textContent='⏸ Pause';
+    animTimer=setInterval(()=>{animFrame+=3;if(animFrame>=TICKS){clearInterval(animTimer);animPlaying=false;document.getElementById('tick-play').textContent='▶ Animate ticks';return;}drawMode(animFrame);},30);
+  });
+
+  drawMode();
+  window.addEventListener('resize',()=>drawMode());
+})();
+
+// ══════════════════════════════════════════
+// HISTORY — adjusted vs unadjusted
+// ══════════════════════════════════════════
+(()=>{
+  const cv=document.getElementById('hist-chart'),ctx=cv.getContext('2d');cv.height=165;
+  const N=90;
+  // Simulate 90 days: dividend ex-date at day 30, 2-for-1 split at day 60
+  const DIVIDEND=1.5, SPLIT=2;
+  const raw=[]; let p=100;
+  for(let i=0;i<N;i++){
+    p+=rnd(-.8,.8)+.05;
+    if(i===30) p-=DIVIDEND; // price drops by dividend on ex-date
+    if(i===60) p=p/SPLIT;   // price halves on split
+    raw.push(+p.toFixed(2));
+  }
+  // Adjusted: roll back dividends and split additively/multiplicatively
+  const adj=raw.map((v,i)=>{
+    let a=v;
+    if(i<60) a=a/SPLIT; // multiply pre-split prices by 1/SPLIT so they line up
+    if(i<30) a=a-DIVIDEND/SPLIT; // subtract (adjusted) dividend from pre-ex prices
+    return +a.toFixed(2);
+  });
+
+  let showAdj=true;
+  function draw(){
+    const W=cv.offsetWidth;cv.width=W;const H=165;ctx.clearRect(0,0,W,H);
+    const data=showAdj?adj:raw;
+    const mn=Math.min(...data)-.5,mx=Math.max(...data)+.5;
+    drawGrid(ctx,W,H,mn,mx,4);
+    // event lines
+    [30,60].forEach((d,i)=>{const x=(d/(N-1))*W;ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.strokeStyle='rgba(160,40,40,0.25)';ctx.lineWidth=1;ctx.setLineDash([3,3]);ctx.stroke();ctx.setLineDash([]);ctx.fillStyle='#a02828';ctx.font='9px sans-serif';ctx.textAlign='center';ctx.fillText(i===0?'Dividend':'2-for-1 Split',x,12);});
+    ctx.beginPath();data.forEach((v,i)=>{const x=(i/(N-1))*W,y=H-((v-mn)/(mx-mn))*H;i?ctx.lineTo(x,y):ctx.moveTo(x,y);});
+    ctx.strokeStyle=showAdj?'#0d6650':'#1660a0';ctx.lineWidth=2.5;ctx.stroke();
+    document.getElementById('hist-mode').textContent=showAdj?'Adjusted':'Unadjusted';
+  }
+  document.getElementById('hist-adj').addEventListener('click',function(){showAdj=true;document.getElementById('hist-adj').classList.add('active-mode');document.getElementById('hist-raw').classList.remove('active-mode');draw();});
+  document.getElementById('hist-raw').addEventListener('click',function(){showAdj=false;document.getElementById('hist-raw').classList.add('active-mode');document.getElementById('hist-adj').classList.remove('active-mode');draw();});
+  draw();window.addEventListener('resize',draw);
+})();
+</script>
+
+
+</body></html>

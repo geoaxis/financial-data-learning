@@ -159,22 +159,16 @@
   ::-webkit-scrollbar-thumb { background:var(--border); }
 
   /* glossary definition list */
-  .def-list{margin:0;}
-  .def-list dt{font-size:.68rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:1.25rem 0 .3rem;position:relative;cursor:help;}
-  .def-list dt:first-child{margin-top:0;}
-  .def-list dd{font-size:.875rem;color:#3a3835;line-height:1.7;margin:0;padding-bottom:1.1rem;border-bottom:1px solid var(--rule);}
-  .def-list dd:last-child{border-bottom:none;padding-bottom:0;}
-  .def-list dd strong{color:var(--text);font-weight:600;}
-  @media(prefers-color-scheme:dark){.def-list dd{color:var(--text2);}}
-  .def-list dt a{color:inherit;text-decoration:none;border-bottom:1px dotted currentColor;padding-bottom:1px;}
-  .def-list dt a:hover{opacity:0.7;}
-  .def-list dt[data-tip]:hover::after{content:attr(data-tip);position:absolute;left:0;top:calc(100% + 4px);background:var(--text);color:var(--bg);font-size:.72rem;font-weight:400;letter-spacing:0;text-transform:none;white-space:normal;line-height:1.55;padding:7px 11px;border-radius:4px;max-width:280px;min-width:160px;z-index:100;pointer-events:none;box-shadow:0 3px 12px rgba(0,0,0,0.18);}
+  /* inline glossary term links */
+  .gloss{color:inherit;border-bottom:1px dotted var(--muted);text-decoration:none;cursor:help;position:relative;}
+  .gloss:hover{border-bottom-color:var(--text);}
+  .gloss[data-tip]:hover::after{content:attr(data-tip);position:absolute;left:0;top:calc(100% + 4px);background:var(--text);color:var(--bg);font-size:.72rem;font-weight:400;letter-spacing:0;text-transform:none;white-space:normal;line-height:1.55;padding:7px 11px;border-radius:4px;max-width:260px;min-width:140px;z-index:100;pointer-events:none;box-shadow:0 3px 12px rgba(0,0,0,0.18);}
 </style>
 </head>
 <body>
 
 <div class="hero">
-  <div class="eyebrow">A field guide for software engineers</div>
+  <div class="eyebrow">A field guide for software engineers &nbsp;·&nbsp; <a href="glossary.html" style="color:inherit;text-decoration:none;border-bottom:1px dotted currentColor;">Glossary ↗</a></div>
   <h1>Financial market data — what it is and how it behaves</h1>
   <p>Seven topics covering the asset classes and data patterns you'll encounter when building on a market data feed. Each section pairs the financial concept with the engineering reality.</p>
 </div>
@@ -188,7 +182,6 @@
     <button class="tab" data-t="der">Derivatives</button>
     <button class="tab" data-t="fund">Funds &amp; ETFs</button>
     <button class="tab" data-t="qt">Quote &amp; Time Series</button>
-    <button class="tab" data-t="gl">Glossary</button>
   </div>
 </div>
 
@@ -219,7 +212,7 @@
     <div class="box bl">
       <h3>Quote Data (dynamic)</h3>
       Describes <em>what price</em> a security is trading at right now. Can change thousands of times per second.<br><br>
-      <strong>Examples:</strong> bid, ask, last price, volume, OHLCV bars, yield, NAV.<br><br>
+      <strong>Examples:</strong> <a class="gloss" href="glossary.html#bid" data-tip="Highest price a buyer will pay right now. Sell at market and you get this.">bid</a>, <a class="gloss" href="glossary.html#ask" data-tip="Lowest price a seller will accept right now. Buy at market and you pay this.">ask</a>, last price, volume, <a class="gloss" href="glossary.html#ohlcv" data-tip="Open, High, Low, Close, Volume — the five standard fields in a price bar.">OHLCV</a> bars, yield, <a class="gloss" href="glossary.html#nav" data-tip="Net Asset Value — per-share value of a fund, calculated daily at market close.">NAV</a>.<br><br>
       <strong>Engineering pattern:</strong> streaming or short-TTL cache. Three freshness levels: <strong>real-time</strong> (milliseconds), <strong>delayed</strong> (15–20 min), <strong>EOD</strong> (once daily at close).
     </div>
   </div>
@@ -251,7 +244,7 @@
     <code>WKN</code> — Germany (6 characters).<br>
     <code>MIC</code> — ISO 10383, identifies the <em>exchange</em> not the security (e.g. <code>XETR</code> = Xetra, <code>XLON</code> = LSE).<br>
     <code>RIC</code> / <code>ticker</code> — vendor-specific, not globally unique.<br><br>
-    <strong>The ISIN trap:</strong> AAPL (US0378331005) is listed on NASDAQ, Frankfurt, and dozens of other exchanges — one ISIN, many listings, many prices. Always pair an ISIN with a <code>MIC</code> or exchange code to get a unique price.
+    <strong>The <a class="gloss" href="glossary.html#isin" data-tip="12-character global security identifier — country code + 9 chars + check digit.">ISIN</a> trap:</strong> AAPL (US0378331005) is listed on NASDAQ, Frankfurt, and dozens of other exchanges — one ISIN, many listings, many prices. Always pair an ISIN with a <code><a class="gloss" href="glossary.html#mic" data-tip="4-character code for a trading venue — e.g. XETR = Xetra, XLON = LSE, XNYS = NYSE." style="color:inherit;text-decoration:none;">MIC</a></code> or exchange code to get a unique price.
   </div>
 
   <div class="sub-label">One security, many prices</div>
@@ -293,7 +286,7 @@
   <div class="grid2">
     <div class="box eq">
       <h3>Key Data Fields</h3>
-      <strong>Quote:</strong> <code>bid</code> <code>ask</code> <code>last_price</code> <code>volume</code> <code>vwap</code><br>
+      <strong>Quote:</strong> <code><a class="gloss" href="glossary.html#bid" data-tip="Highest price a buyer will pay right now." style="color:inherit;text-decoration:none;">bid</a></code> <code><a class="gloss" href="glossary.html#ask" data-tip="Lowest price a seller will accept right now." style="color:inherit;text-decoration:none;">ask</a></code> <code>last_price</code> <code>volume</code> <code><a class="gloss" href="glossary.html#vwap" data-tip="Volume-Weighted Average Price — execution quality benchmark used by institutional traders." style="color:inherit;text-decoration:none;">vwap</a></code><br>
       <strong>OHLCV:</strong> <code>open</code> <code>high</code> <code>low</code> <code>close</code> <code>volume</code><br>
       <strong>Reference:</strong> <code>isin</code> <code>name</code> <code>mic</code> <code>currency</code><br>
       <strong>Fundamentals:</strong> <code>market_cap</code> <code>shares_outstanding</code> <code>pe_ratio</code> <code>eps</code><br>
@@ -366,9 +359,9 @@
       <h3>Key Data Fields</h3>
       <strong>Reference:</strong> <code>isin</code> <code>issuer_name</code> <code>currency</code> <code>face_value</code><br>
       <strong>Structure:</strong> <code>coupon_rate</code> <code>coupon_frequency</code> <code>maturity_date</code> <code>issue_date</code><br>
-      <strong>Quote:</strong> <code>clean_price</code> <code>dirty_price</code> <code>bid</code> <code>ask</code><br>
-      <strong>Analytics:</strong> <code>yield_to_maturity</code> <code>duration</code> <code>modified_duration</code><br>
-      <strong>Accrual:</strong> <code>accrued_interest</code> <code>day_count_convention</code><br>
+      <strong>Quote:</strong> <code><a class="gloss" href="glossary.html#clean-price" data-tip="Bond price excluding accrued interest — what trading screens show." style="color:inherit;text-decoration:none;">clean_price</a></code> <code><a class="gloss" href="glossary.html#dirty-price" data-tip="Actual cash paid to buy a bond: clean price + accrued interest." style="color:inherit;text-decoration:none;">dirty_price</a></code> <code>bid</code> <code>ask</code><br>
+      <strong>Analytics:</strong> <code>yield_to_maturity</code> <code><a class="gloss" href="glossary.html#duration" data-tip="Bond sensitivity to interest rates. Duration 8 = price drops ~8% if rates rise 1%." style="color:inherit;text-decoration:none;">duration</a></code> <code>modified_duration</code><br>
+      <strong>Accrual:</strong> <code><a class="gloss" href="glossary.html#accrued-interest" data-tip="Interest earned since the last coupon payment but not yet paid out." style="color:inherit;text-decoration:none;">accrued_interest</a></code> <code>day_count_convention</code><br>
       <strong>Credit:</strong> <code>credit_rating</code> <code>rating_agency</code> <code>seniority</code>
     </div>
     <div class="box fi">
@@ -499,7 +492,7 @@
     <div class="box der">
       <h3>Key Data Fields</h3>
       <strong>Options:</strong> <code>underlying_isin</code> <code>strike</code> <code>expiry_date</code> <code>option_type</code> (Call/Put)<br>
-      <strong>Greeks:</strong> <code>delta</code> <code>gamma</code> <code>theta</code> <code>vega</code> <code>rho</code><br>
+      <strong>Greeks:</strong> <code><a class="gloss" href="glossary.html#delta" data-tip="Option price change per $1 move in the underlying. Also: probability of expiring in-the-money." style="color:inherit;text-decoration:none;">delta</a></code> <code>gamma</code> <code><a class="gloss" href="glossary.html#theta" data-tip="Daily time decay — options lose value every day just from time passing." style="color:inherit;text-decoration:none;">theta</a></code> <code>vega</code> <code>rho</code><br>
       <strong>Volatility:</strong> <code>implied_volatility</code> <code>historical_volatility</code><br>
       <strong>Quote:</strong> <code>premium</code> <code>bid</code> <code>ask</code> <code>open_interest</code><br>
       <strong>Futures:</strong> <code>contract_size</code> <code>tick_size</code> <code>last_trading_day</code> <code>settlement_type</code> (cash/physical)<br>
@@ -563,9 +556,9 @@
   <div class="grid2">
     <div class="box fund">
       <h3>Key Data Fields</h3>
-      <strong>Valuation:</strong> <code>nav</code> <code>nav_date</code> <code>currency</code><br>
+      <strong>Valuation:</strong> <code><a class="gloss" href="glossary.html#nav" data-tip="Net Asset Value — per-share value of a fund, calculated daily at market close." style="color:inherit;text-decoration:none;">nav</a></code> <code>nav_date</code> <code>currency</code><br>
       <strong>Classification:</strong> <code>is_etf</code> <code>fund_type</code> <code>replication_method</code> (physical/synthetic)<br>
-      <strong>Costs:</strong> <code>ter</code> (total expense ratio) <code>ongoing_charge</code><br>
+      <strong>Costs:</strong> <code><a class="gloss" href="glossary.html#ter" data-tip="Total Expense Ratio — annual fund cost deducted daily from assets, not billed separately." style="color:inherit;text-decoration:none;">ter</a></code> (total expense ratio) <code>ongoing_charge</code><br>
       <strong>Size:</strong> <code>aum</code> (assets under management) <code>shares_outstanding</code><br>
       <strong>Distribution:</strong> <code>distribution_type</code> (Acc/Dist) <code>dividend_date</code> <code>dividend_amount</code><br>
       <strong>Composition:</strong> top holdings, country weights, sector weights, currency exposure
@@ -731,10 +724,8 @@
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════
-     TAB 8 — GLOSSARY
-═══════════════════════════════════════════ -->
-<div class="panel" id="panel-gl">
+<!-- panel-gl removed; terms link to glossary.html -->
+<div class="panel" id="panel-gl" style="display:none">
   <div class="sec-head">
     <div class="sec-num">08 — Glossary</div>
     <h2>Key Terms Reference</h2>

@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Financial terms glossary</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#ffffff;--bg2:#f6f5f1;--bg3:#eeedea;
+  --text:#181816;--text2:#5a5956;--text3:#9a9892;
+  --border:rgba(0,0,0,0.09);--border2:rgba(0,0,0,0.18);
+  --radius:6px;
+}
+@media(prefers-color-scheme:dark){:root{
+  --bg:#181816;--bg2:#222220;--bg3:#2c2c2a;
+  --text:#e6e4dc;--text2:#9a9892;--text3:#686663;
+  --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.15);
+}}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;background:var(--bg);color:var(--text);font-size:15px;line-height:1.7;margin:0;padding:0;}
+.page{max-width:760px;margin:0 auto;padding:52px 28px 80px;}
+
+/* hero */
+.hero{padding-bottom:36px;border-bottom:0.5px solid var(--border);margin-bottom:44px;}
+.back{font-size:12px;color:var(--text3);text-decoration:none;display:inline-block;margin-bottom:20px;}
+.back:hover{color:var(--text);}
+.hero-tag{font-size:11px;font-weight:600;letter-spacing:.1em;color:var(--text3);margin-bottom:12px;display:block;}
+.hero h1{font-size:26px;font-weight:500;line-height:1.25;margin-bottom:12px;}
+.hero-sub{font-size:14px;color:var(--text2);line-height:1.7;}
+
+/* category jump nav */
+.cat-nav{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:48px;}
+.cat-nav a{font-size:12px;font-weight:500;color:var(--text2);text-decoration:none;padding:4px 10px;border:0.5px solid var(--border2);border-radius:var(--radius);}
+.cat-nav a:hover{background:var(--bg2);color:var(--text);}
+
+/* sections */
+section{margin-bottom:52px;scroll-margin-top:24px;}
+.sec-tag{font-size:11px;font-weight:600;letter-spacing:.1em;color:var(--text3);margin-bottom:8px;display:block;}
+section h2{font-size:17px;font-weight:500;margin-bottom:22px;padding-bottom:12px;border-bottom:0.5px solid var(--border);}
+
+/* definition list */
+.def-list{margin:0;}
+.def-list dt{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--text);margin:22px 0 5px;display:flex;align-items:baseline;gap:10px;}
+.def-list dt:first-child{margin-top:0;}
+.def-list dt a.wiki{font-size:10px;font-weight:500;letter-spacing:.03em;color:var(--text3);text-decoration:none;border-bottom:1px dotted var(--text3);text-transform:none;flex-shrink:0;}
+.def-list dt a.wiki:hover{color:var(--text2);}
+.def-list dd{font-size:13px;color:var(--text2);line-height:1.68;margin:0;padding-bottom:22px;border-bottom:0.5px solid var(--border);}
+.def-list dd:last-child{border-bottom:none;padding-bottom:0;}
+.def-list dd strong{color:var(--text);font-weight:500;}
+.def-list dd code{background:var(--bg2);padding:.1em .38em;font-family:'SF Mono','Fira Code',monospace;font-size:.82em;}
+
+/* footer */
+footer{border-top:0.5px solid var(--border);padding-top:20px;font-size:12px;color:var(--text3);line-height:1.7;}
+</style>
+</head>
+<body>
+<div class="page">
+
+<header class="hero">
+  <a href="index.html" class="back">← All guides</a>
+  <span class="hero-tag">REFERENCE</span>
+  <h1>Financial terms glossary</h1>
+  <p class="hero-sub">Plain-English definitions for the financial and market data concepts used across the guides. Click any Wikipedia link to go deeper.</p>
+</header>
+
+<nav class="cat-nav">
+  <a href="#market-data">Market data</a>
+  <a href="#equities">Equities</a>
+  <a href="#bonds">Bonds</a>
+  <a href="#fx">FX</a>
+  <a href="#derivatives">Derivatives</a>
+  <a href="#structured-products">Structured products</a>
+  <a href="#funds">Funds &amp; ETFs</a>
+</nav>
+
+<!-- ── MARKET DATA ── -->
+<section id="market-data">
+  <span class="sec-tag">01 — Market data fundamentals</span>
+  <h2>Market data</h2>
+  <dl class="def-list">
+    <dt id="bid">Bid <a class="wiki" href="https://en.wikipedia.org/wiki/Bid%E2%80%93ask_spread" target="_blank" rel="noopener">Wikipedia ↗</a></dt>
+    <dd>The highest price a buyer is currently willing to pay for a security. If you sell immediately ("at market"), the bid is what you receive. Market makers post bids continuously and profit from the spread between bid and ask.</dd>
+
+    <dt id="ask">Ask (Offer) <a class="wiki" href="https://en.wikipedia.org/wiki/Bid%E2%80%93ask_spread" target="_blank" rel="noopener">Wikipedia ↗</a></dt>
+    <dd>The lowest price a seller is currently willing to accept. If you buy immediately, you pay the ask. The ask is always higher than the bid — the difference between them is the spread.</dd>
+
+    <dt id="spread">Spread <a class="wiki" href="https://en.wikipedia.org/wiki/Bid%E2%80%93ask_spread" target="_blank" rel="noopener">Wikipedia ↗</a></dt>
+    <dd>The difference between the ask and bid prices. The market maker's implicit fee, built into the price rather than charged separately. A tight spread (e.g. 0.5 pips on EUR/USD) indicates high liquidity; a wide spread indicates low liquidity or elevated risk.</dd>
+
+    <dt id="ohlcv">OHLCV <a class="wiki" href="https://en.wikipedia.org/wiki/Open-high-low-close_chart" target="_blank" rel="noopener">Wikipedia ↗</a></dt>
+    <dd><strong>Open, High, Low, Close, Volume.</strong> The five standard fields in a price bar (candlestick). Open and close are the first and last traded prices in the period; high and low are the extremes; volume is the total units traded. The building block of every price chart.</dd>
+
+    <dt id="isin">ISIN <a class="wiki" href="https://en.wikipedia.org/wiki/International_Securities_Identification_Number" target="_blank" rel="noopener">Wikipedia ↗</a></dt>
+    <dd><strong>International Securities Identification Number</strong> (ISO 6166). A 12-character alphanumeric code that globally identifies a security. Format: 2-letter country code + 9-character national identifier + check digit. Example: US0378331005 for Apple Inc. One ISIN can have many exchange listings — always pair it with a MIC to get a unique, venue-specific price.</dd>
+
+    <dt id="mic">MIC <a class="wiki" href="https://en.wikipedia.org/wiki/Market_Identifier_Code" target="_blank" rel="noopener">Wikipedia ↗</a></dt>
+    <dd><strong>Market Identifier Code</strong> (ISO 10383). A 4-character code identifying an exchange or trading venue. Examples: <code>XETR</code> (Xetra), <code>XLON</code> (London Stock Exchange), <code>XNYS</code> (NYSE). Required alongside an ISIN to uniquely identify a listing and its price.</dd>
+
+    <dt id="sedol">SEDOL <a class="wiki" href="https://en.wikipedia.org/wiki/SEDOL" target="_blank" rel="noopener">Wikipedia ↗</a></dt>
+    <dd><strong>Stock Exchange Daily Official List.</strong> A 7-character identifier used primarily in UK and Irish markets, issued by the London Stock Exchange. Widely used in European financial systems alongside ISIN.</dd>
+
+    <dt id="wkn">WKN <a class="wiki" href="https://en.wikipedia.org/wiki/Wertpapierkennnummer" target="_blank" rel="noopener">Wikipedia ↗</a></dt>
+    <dd><strong>Wertpapierkennnummer.</strong> Germany's 6-character security identifier, used before ISIN became the global standard. Still common in German retail brokerage systems. Every German-listed security has both a WKN and an ISIN.</dd>
+
+    <dt id="reference-data">Reference data <a class="wiki" href="https://en.wikipedia.org/wiki/Reference_data_(financial_markets)" target="_blank" rel="noopener">Wikipedia ↗</a></dt>
+    <dd>Static, descriptive information about a security — what it <em>is</em>, not what it costs. Includes: name, ISIN, exchange, currency, coupon rate, maturity date. Changes infrequently. Cache aggressively; treat like a configuration file, not a live stream. Invalidate on corporate action events.</dd>
+
+    <dt id="quote-data">Quote data <a class="wiki" href="https://en.wikipedia.org/wiki/Market_data" target="_blank" rel="noopener">Wikipedia ↗</a></dt>
+    <dd>Dynamic pricing information — current bid, ask, last price, volume. Can change thousands of times per second for liquid instruments. Three freshness tiers: <strong>real-time</strong> (millisecond latency, requires exchange entitlement), <strong>delayed</strong> (15–20 min lag), <strong>EOD</strong> (once daily at close).</dd>
+
+    <dt id="corporate-action">Corporate action <a class="wiki" href="https://en.wikipedia.org/wiki/Corporate_action" target="_blank" rel="noopener">Wikipedia ↗</a></dt>
+    <dd>An event issued by a company that changes its securities: dividends, stock splits, rights issues, mergers, spin-offs. The most common source of silent data bugs in financial systems, because they retroactively change the meaning of historical prices without generating a trade.</dd>
+
+    <dt id="adjusted-price">Adjusted price <a class="wiki" href="https://en.wikipedia.org/wiki/Adjusted_closing_price" target="_blank" rel="noopener">Wikipedia ↗</a></dt>
+    <dd>A historical price modified to account for corporate actions so that charts and return calculations remain continuous. A 2-for-1 split halves all pre-split closing prices. A dividend subtracts the payout from all pre-ex-date prices. The alternative — unadjusted (raw) prices — shows actual traded prices with visible discontinuities at the event dates.</dd>
+  </dl>
+</section>
+
+<!-- ── EQUITIES ── -->
+<section id="equities">
+  <span class="sec-tag">02 — Equities</span>
+  <h2>Equities</h2>
+  <dl class="def-list">
+    <dt id="vwap">VWAP <a class="wiki" href="https://en.wikipedia.org/wiki/Volume-weighted_average_price" target="_blank" rel="noopener">Wikipedia ↗</a></dt>
+    <dd><strong>Volume-Weighted Average Price.</strong> The average price weighted by trading volume over a session: Σ(price × volume) ÷ Σ(volume). Institutional traders benchmark execution quality against VWAP — buying below it is considered a good fill. Published as a real-time field in intraday quote data.</dd>
+
+    <dt id="ex-date">Ex-date <a class="wiki" href="https://en.wikipedia.org/wiki/Ex-dividend_date" target="_blank" rel="noopener">Wikipedia ↗</a></dt>
+    <dd>The first date on which a buyer of the stock is <em>not</em> entitled to the next dividend or rights issue. Buy on or after the ex-date and you miss the upcoming payment. The share price typically drops by the dividend amount on this date — this is an adjustment in entitlement, not a loss.</dd>
+
+    <dt id="t2-settlement">T+2 settlement <a class="wiki" href="https://en.wikipedia.org/wiki/Settlement_(finance)" target="_blank" rel="noopener">Wikipedia ↗</a></dt>
+    <dd>The standard equity settlement cycle: legal transfer of cash and shares occurs two business days after the trade date. Corporate action entitlements are based on settlement date, not trade date — a frequent source of bugs when the distinction is ignored.</dd>
+
+    <dt id="market-cap">Market capitalisation <a class="wiki" href="https://en.wikipedia.org/wiki/Market_capitalization" target="_blank" rel="noopener">Wikipedia ↗</a></dt>
+    <dd>Total market value of a company's outstanding shares: share price × shares outstanding. Used to classify companies (large-cap &gt;$10B, mid-cap, small-cap) and to weight index constituents. Changes continuously with the share price.</dd>
+
+    <dt id="pe-ratio">P/E ratio <a class="wiki" href="https://en.wikipedia.org/wiki/Price%E2%80%93earnings_ratio" target="_blank" rel="noopener">Wikipedia ↗</a></dt>
+    <dd><strong>Price-to-Earnings ratio.</strong> Share price divided by earnings per share (EPS). Indicates how much investors pay per unit of annual profit. A P/E of 25 means investors pay €25 for every €1 of earnings. High P/E implies growth expectations; low P/E may signal value, cyclicality, or distress.</dd>
+  </dl>
+</section>
+
+<!-- ── BONDS ── -->
+<section id="bonds">
+  <span class="sec-tag">03 — Bonds &amp; fixed income</span>
+  <h2>Bonds &amp; fixed income</h2>
+  <dl class="def-list">
+    <dt id="coupon">Coupon <a class="wiki" href="https://en.wikipedia.org/wiki/Coupon_(bond)" target="_blank" rel="noopener">Wikipedia ↗</a></dt>
+    <dd>The periodic interest payment a bond issuer makes to holders. Expressed as an annual percentage of face value. A 5% coupon on a €1,000 bond pays €50/year (€25 semi-annually). Fixed at issuance and does not change over the bond's life, even as market interest rates move.</dd>
+
+    <dt id="face-value">Face value (par) <a class="wiki" href="https://en.wikipedia.org/wiki/Par_value" target="_blank" rel="noopener">Wikipedia ↗</a></dt>
+    <dd>The principal amount repaid to the holder at maturity — typically €1,000 or €100. Also the reference amount for coupon calculations. Bond prices are quoted as a percentage of face value: a price of 98 = €980 per €1,000 face. Prices below 100 are "at a discount"; above 100, "at a premium".</dd>
+
+    <dt id="ytm">Yield to maturity (YTM) <a class="wiki" href="https://en.wikipedia.org/wiki/Yield_to_maturity" target="_blank" rel="noopener">Wikipedia ↗</a></dt>
+    <dd>The annualised total return if a bond is held to maturity, accounting for coupon payments, time remaining, and the difference between current price and face value. The key inverse relationship: when bond prices rise, yields fall, and vice versa.</dd>
+
+    <dt id="clean-price">Clean price <a class="wiki" href="https://en.wikipedia.org/wiki/Dirty_price" target="_blank" rel="noopener">Wikipedia ↗</a></dt>
+    <dd>The bond price <em>excluding</em> accrued interest. The price shown on trading screens and market data feeds. Two bonds with identical structure trade at the same clean price regardless of where they are in their coupon cycle — making clean prices directly comparable.</dd>
+
+    <dt id="dirty-price">Dirty price <a class="wiki" href="https://en.wikipedia.org/wiki/Dirty_price" target="_blank" rel="noopener">Wikipedia ↗</a></dt>
+    <dd>The actual cash paid to buy a bond: <code>dirty = clean + accrued interest</code>. Settlement always occurs at dirty price. The difference between clean and dirty grows linearly between coupon dates, then resets to zero on each payment date.</dd>
+
+    <dt id="accrued-interest">Accrued interest <a class="wiki" href="https://en.wikipedia.org/wiki/Accrued_interest" target="_blank" rel="noopener">Wikipedia ↗</a></dt>
+    <dd>Interest earned since the last coupon payment but not yet paid. When you buy a bond mid-cycle, you compensate the seller for their share of the next coupon. Calculated daily using a day count convention (e.g. Actual/Actual for government bonds, 30/360 for many corporate bonds).</dd>
+
+    <dt id="duration">Duration <a class="wiki" href="https://en.wikipedia.org/wiki/Bond_duration" target="_blank" rel="noopener">Wikipedia ↗</a></dt>
+    <dd>A bond's sensitivity to interest rate changes. A duration of 8 means the price falls approximately 8% for a 1% rise in yield. Longer maturities and lower coupons produce higher duration. <strong>Modified duration</strong> adjusts for the current yield level and is the standard risk measure in fixed income.</dd>
+
+    <dt id="zero-coupon-bond">Zero-coupon bond <a class="wiki" href="https://en.wikipedia.org/wiki/Zero-coupon_bond" target="_blank" rel="noopener">Wikipedia ↗</a></dt>
+    <dd>A bond that pays no periodic interest. Issued at a discount to face value, it matures at par. Used in capital protected structured products: the bank buys a zero-coupon bond that will be worth the guaranteed amount at maturity, then spends the remaining cash on an option. At low rates, the bond costs more — leaving less for the option and producing lower participation rates.</dd>
+  </dl>
+</section>
+
+<!-- ── FX ── -->
+<section id="fx">
+  <span class="sec-tag">04 — Foreign exchange</span>
+  <h2>Foreign exchange</h2>
+  <dl class="def-list">
+    <dt id="pip">Pip <a class="wiki" href="https://en.wikipedia.org/wiki/Pip_(unit)" target="_blank" rel="noopener">Wikipedia ↗</a></dt>
+    <dd><strong>Percentage in Point.</strong> The smallest standard price increment in FX quoting. For EUR/USD (4 decimal places), one pip = 0.0001. A move from 1.0850 to 1.0851 is one pip. Used to express spread size and daily ranges in a currency-neutral way.</dd>
+
+    <dt id="cross-rate">Cross rate <a class="wiki" href="https://en.wikipedia.org/wiki/Exchange_rate" target="_blank" rel="noopener">Wikipedia ↗</a></dt>
+    <dd>An exchange rate between two currencies that does not involve USD. EUR/JPY is derived from EUR/USD × USD/JPY. Most FX liquidity is priced against USD; cross rates are computed synthetically and typically carry wider spreads than major pairs.</dd>
+
+    <dt id="ecb-wmr-fixing">ECB / WMR fixing <a class="wiki" href="https://en.wikipedia.org/wiki/WM/Reuters_rates" target="_blank" rel="noopener">Wikipedia ↗</a></dt>
+    <dd>Point-in-time FX snapshots used as official reference rates. The <strong>ECB fix</strong> is published at 16:00 CET (used for EU regulatory reporting). The <strong>WMR fix</strong> at 16:00 London is the global standard for fund NAV calculations and structured product settlement. DST transitions shift these in UTC — always compute fixing windows in local time.</dd>
+  </dl>
+</section>
+
+<!-- ── DERIVATIVES ── -->
+<section id="derivatives">
+  <span class="sec-tag">05 — Derivatives</span>
+  <h2>Derivatives &amp; options</h2>
+  <dl class="def-list">
+    <dt id="option">Option <a class="wiki" href="https://en.wikipedia.org/wiki/Option_(finance)" target="_blank" rel="noopener">Wikipedia ↗</a></dt>
+    <dd>A contract giving the buyer the <strong>right but not the obligation</strong> to buy (call) or sell (put) an underlying at a specified strike price on or before the expiry date. The buyer pays a premium upfront. Maximum loss for the buyer is the premium paid.</dd>
+
+    <dt id="strike">Strike <a class="wiki" href="https://en.wikipedia.org/wiki/Strike_price" target="_blank" rel="noopener">Wikipedia ↗</a></dt>
+    <dd>The price at which an option holder can buy or sell the underlying. For structured products such as turbos, the strike is the price up to which the bank finances the underlying — you pay only the difference. For capital protected notes, it is the starting level above which upside participation is calculated.</dd>
+
+    <dt id="barrier">Barrier <a class="wiki" href="https://en.wikipedia.org/wiki/Barrier_option" target="_blank" rel="noopener">Wikipedia ↗</a></dt>
+    <dd>A price level embedded in turbos and knock-out certificates. If the underlying touches or crosses this level <strong>at any point during trading hours</strong> — intraday, even momentarily — the product terminates immediately. Barriers are set to give the issuer a safety buffer before the product's financing is impaired.</dd>
+
+    <dt id="knock-out">Knock-out <a class="wiki" href="https://en.wikipedia.org/wiki/Barrier_option" target="_blank" rel="noopener">Wikipedia ↗</a></dt>
+    <dd>The event triggered when an underlying touches the barrier price. The product terminates <strong>permanently and instantly</strong> — no grace period, no recovery clause, even if the price bounces back minutes later. The holder receives a small residual: (barrier − strike) × quantity.</dd>
+
+    <dt id="implied-volatility">Implied volatility (IV) <a class="wiki" href="https://en.wikipedia.org/wiki/Implied_volatility" target="_blank" rel="noopener">Wikipedia ↗</a></dt>
+    <dd>The market's expectation of future price variability, derived by working backwards from an option's market price using a pricing model. Higher IV = more expensive options. IV spikes during uncertainty (earnings, crises). Comparing IV to historical volatility reveals whether options are "cheap" or "expensive".</dd>
+
+    <dt id="delta">Delta <a class="wiki" href="https://en.wikipedia.org/wiki/Greeks_(finance)" target="_blank" rel="noopener">Wikipedia ↗</a></dt>
+    <dd>The rate of change of a derivative's price for a unit move in the underlying. An option with delta 0.5 moves €0.50 per €1 move in the underlying. Deep in-the-money options approach delta 1; out-of-the-money options approach 0. Also interpreted as the approximate probability of expiring in-the-money.</dd>
+
+    <dt id="theta">Theta <a class="wiki" href="https://en.wikipedia.org/wiki/Greeks_(finance)#Theta" target="_blank" rel="noopener">Wikipedia ↗</a></dt>
+    <dd>The daily loss in an option's value due to time passing alone, all else held equal. Options are <em>wasting assets</em> — they lose value every day they are held, accelerating as expiry approaches. A theta of −0.05 means the option loses €0.05 of value per calendar day.</dd>
+
+    <dt id="open-interest">Open interest <a class="wiki" href="https://en.wikipedia.org/wiki/Open_interest" target="_blank" rel="noopener">Wikipedia ↗</a></dt>
+    <dd>The total number of outstanding contracts for a given option or futures series that have not yet been settled. A measure of market participation and liquidity. Rising open interest alongside rising prices is typically a bullish signal; rising open interest with falling prices is bearish.</dd>
+
+    <dt id="leverage-ratio">Leverage ratio <a class="wiki" href="https://en.wikipedia.org/wiki/Leverage_(finance)" target="_blank" rel="noopener">Wikipedia ↗</a></dt>
+    <dd>How much a product amplifies the underlying's moves. For a turbo, calculated as <strong>underlying price ÷ product price</strong>. A turbo priced at €40 on a €200 share has 5× leverage — a 1% move in the underlying produces approximately a 5% change in the turbo's price. Leverage increases as the underlying approaches the barrier.</dd>
+  </dl>
+</section>
+
+<!-- ── STRUCTURED PRODUCTS ── -->
+<section id="structured-products">
+  <span class="sec-tag">06 — Structured products</span>
+  <h2>Structured products</h2>
+  <dl class="def-list">
+    <dt id="structured-product">Structured product <a class="wiki" href="https://en.wikipedia.org/wiki/Structured_product" target="_blank" rel="noopener">Wikipedia ↗</a></dt>
+    <dd>A bank-issued financial instrument that combines a <strong>bond</strong> with an <strong>option</strong> to create a custom risk/reward profile. Traded on exchanges like Börse Stuttgart (EUWAX) and Börse Frankfurt. Bought through a normal brokerage account alongside stocks and ETFs. Issued as bank debt, not equity in the underlying.</dd>
+
+    <dt id="underlying">Underlying <a class="wiki" href="https://en.wikipedia.org/wiki/Underlying" target="_blank" rel="noopener">Wikipedia ↗</a></dt>
+    <dd>The reference asset a structured product or derivative is linked to — typically a share, an index, or a commodity. The underlying's price drives the product's payoff. You do not own the underlying itself; you hold a bank-issued claim on its performance.</dd>
+
+    <dt id="participation-rate">Participation rate <a class="wiki" href="https://en.wikipedia.org/wiki/Capital_protection" target="_blank" rel="noopener">Wikipedia ↗</a></dt>
+    <dd>In a capital protected note, the fraction of the underlying's upside you capture above the strike. A 60% rate means you keep €0.60 for every €1 of gain. Set at issuance. Higher rates require higher interest rates, which reduce the cost of the zero-coupon bond and leave more budget for the call option.</dd>
+
+    <dt id="cap">Cap <a class="wiki" href="https://en.wikipedia.org/wiki/Covered_call" target="_blank" rel="noopener">Wikipedia ↗</a></dt>
+    <dd>The maximum return a discount certificate can pay. If the underlying closes above the cap at maturity, you receive the cap value — not the actual price. Funded by selling a call option at that level; the premium collected is passed on to you as the purchase discount.</dd>
+
+    <dt id="issuer-credit-risk">Issuer credit risk <a class="wiki" href="https://en.wikipedia.org/wiki/Credit_risk" target="_blank" rel="noopener">Wikipedia ↗</a></dt>
+    <dd>The risk that the bank that issued the product defaults. Structured products are <strong>unsecured bank debt</strong> — not equity in the underlying. If the bank enters insolvency, your claim joins the creditor queue regardless of where the underlying is trading. This risk does not exist when you hold shares directly.</dd>
+
+    <dt id="maturity">Maturity <a class="wiki" href="https://en.wikipedia.org/wiki/Maturity_(finance)" target="_blank" rel="noopener">Wikipedia ↗</a></dt>
+    <dd>The expiry date on which a product or bond cash-settles. For structured products, the payoff formula is applied to the final underlying price and proceeds are paid. Open-ended turbos have no fixed maturity — they expire on knock-out or can be closed voluntarily.</dd>
+  </dl>
+</section>
+
+<!-- ── FUNDS ── -->
+<section id="funds">
+  <span class="sec-tag">07 — Funds &amp; ETFs</span>
+  <h2>Funds &amp; ETFs</h2>
+  <dl class="def-list">
+    <dt id="nav">NAV <a class="wiki" href="https://en.wikipedia.org/wiki/Net_asset_value" target="_blank" rel="noopener">Wikipedia ↗</a></dt>
+    <dd><strong>Net Asset Value.</strong> Per-share value of a fund: (total assets − liabilities) ÷ shares outstanding. Mutual fund NAV is calculated once daily at market close and published T+1. ETF NAV is also daily, but ETFs additionally have a continuous intraday market price — the difference between the two is the premium or discount.</dd>
+
+    <dt id="inav">iNAV <a class="wiki" href="https://en.wikipedia.org/wiki/Exchange-traded_fund" target="_blank" rel="noopener">Wikipedia ↗</a></dt>
+    <dd><strong>Indicative NAV.</strong> A real-time estimate of an ETF's NAV, published by the exchange every 15 seconds during trading hours. Derived from live prices of the underlying holdings. Used by traders to assess whether the ETF is trading at a fair premium or discount to its underlying basket.</dd>
+
+    <dt id="ter">TER <a class="wiki" href="https://en.wikipedia.org/wiki/Expense_ratio" target="_blank" rel="noopener">Wikipedia ↗</a></dt>
+    <dd><strong>Total Expense Ratio.</strong> The annual cost of owning a fund, expressed as a percentage of AUM. Deducted daily from the fund's assets — so the NAV already reflects costs. A TER of 0.20% costs €2/year per €1,000 invested. Lower TER = more return kept by the investor.</dd>
+
+    <dt id="acc-dist">Accumulating (Acc) vs Distributing (Dist) <a class="wiki" href="https://en.wikipedia.org/wiki/Accumulation_fund" target="_blank" rel="noopener">Wikipedia ↗</a></dt>
+    <dd><strong>Accumulating</strong> funds reinvest dividends and coupons — NAV grows over time to reflect reinvested income. <strong>Distributing</strong> funds pay income out periodically — NAV drops by the distribution amount on ex-date. Tax treatment and historical NAV charts look very different between the two.</dd>
+
+    <dt id="ucits">UCITS <a class="wiki" href="https://en.wikipedia.org/wiki/Undertakings_for_Collective_Investment_in_Transferable_Securities" target="_blank" rel="noopener">Wikipedia ↗</a></dt>
+    <dd><strong>Undertakings for Collective Investment in Transferable Securities.</strong> The European regulatory framework for retail investment funds. A UCITS fund can be sold across all EU member states with a single registration ("fund passport"). Sets rules on diversification, eligible assets, leverage, and disclosure.</dd>
+
+    <dt id="authorized-participant">Authorized participant (AP) <a class="wiki" href="https://en.wikipedia.org/wiki/Exchange-traded_fund" target="_blank" rel="noopener">Wikipedia ↗</a></dt>
+    <dd>An institution (typically a large bank or market maker) with the right to create and redeem ETF shares in large blocks directly with the fund. APs arbitrage away any premium or discount between the ETF's market price and its NAV — keeping ETF prices tightly aligned with NAV at all times.</dd>
+  </dl>
+</section>
+
+<footer>
+  Definitions are simplified for educational clarity. Wikipedia links open in a new tab.
+</footer>
+
+</div>
+</body>
+</html>
